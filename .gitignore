@@ -46,6 +46,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+
+# custom
+
 /Sumo_Robot/Debug/
 /Sumo_Robot/Generated_Code/
 /Sumo_Robot/.settings/
@@ -55,3 +58,11 @@ Temporary Items
 /Sumo_Robot/ProjectInfo.xml
 /Sumo_Robot/.cwGeneratedFileSetLog
 
+/Sumo_Remote/Debug/
+/Sumo_Remote/Generated_Code/
+/Sumo_Remote/.settings/
+/Sumo_Remote/Documentation/
+/Sumo_Remote/*.g_c
+/Sumo_Remote/*.g_x
+/Sumo_Remote/ProjectInfo.xml
+/Sumo_Remote/.cwGeneratedFileSetLog
