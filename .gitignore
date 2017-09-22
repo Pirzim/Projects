@@ -45,3 +45,13 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+/Sumo_Robot/Debug/
+/Sumo_Robot/Generated_Code/
+/Sumo_Robot/.settings/
+/Sumo_Robot/Documentation/
+/Sumo_Robot/*.g_c
+/Sumo_Robot/*.g_x
+/Sumo_Robot/ProjectInfo.xml
+/Sumo_Robot/.cwGeneratedFileSetLog
+
