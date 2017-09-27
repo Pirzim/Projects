@@ -30,6 +30,7 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
+#include "LED1.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"
@@ -48,8 +49,12 @@ int main(void)
   /*** End of Processor Expert internal initialization.                    ***/
 
 
+  /* Versuch ein LED anzusteuern, welches am Port PTD0 angeschlossen ist*/
+  LED1_SetVal(LED1_DeviceData);
+  LED1_ClrVal(LED1_DeviceData);
 
- /* TEST Zeile*/
+
+
 
 
 
