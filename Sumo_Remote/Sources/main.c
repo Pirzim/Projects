@@ -4,7 +4,7 @@
 **     Processor   : MK20DX128VLQ10
 **     Version     : Driver 01.01
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2017-09-22, 21:15, # CodeGen: 0
+**     Date/Time   : 2017-09-28, 16:26, # CodeGen: 0
 **     Abstract    :
 **         Main module.
 **         This module contains user's application code.
@@ -30,12 +30,15 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
-#include "clockMan1.h"
-#include "pin_mux.h"
-#include "osa1.h"
-#if CPU_INIT_CONFIG
-  #include "Init_Config.h"
-#endif
+#include "Bit1.h"
+#include "BitIoLdd1.h"
+#include "WAIT1.h"
+#include "MCUC1.h"
+/* Including shared modules, which are used for whole project */
+#include "PE_Types.h"
+#include "PE_Error.h"
+#include "PE_Const.h"
+#include "IO_Map.h"
 /* User includes (#include below this line is not maintained by Processor Expert) */
 
 /*lint -save  -e970 Disable MISRA rule (6.3) checking. */

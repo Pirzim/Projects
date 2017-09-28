@@ -5,13 +5,12 @@
 **     Component   : Events
 **     Version     : Driver 01.00
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2017-09-22, 21:15, # CodeGen: 0
+**     Date/Time   : 2017-09-28, 16:26, # CodeGen: 0
 **     Abstract    :
 **         This is user's event module.
 **         Put your event handler code here.
-**     Settings    :
 **     Contents    :
-**         No public methods
+**         Cpu_OnNMIINT - void Cpu_OnNMIINT(void);
 **
 ** ###################################################################*/
 /*!
@@ -30,14 +29,33 @@
 #define __Events_H
 /* MODULE Events */
 
-#include "fsl_device_registers.h"
-#include "clockMan1.h"
-#include "pin_mux.h"
-#include "osa1.h"
+#include "PE_Types.h"
+#include "PE_Error.h"
+#include "PE_Const.h"
+#include "IO_Map.h"
+#include "Bit1.h"
+#include "BitIoLdd1.h"
+#include "WAIT1.h"
+#include "MCUC1.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif 
+
+/*
+** ===================================================================
+**     Event       :  Cpu_OnNMIINT (module Events)
+**
+**     Component   :  Cpu [MK20DN512LQ10]
+*/
+/*!
+**     @brief
+**         This event is called when the Non maskable interrupt had
+**         occurred. This event is automatically enabled when the [NMI
+**         interrupt] property is set to 'Enabled'.
+*/
+/* ===================================================================*/
+void Cpu_OnNMIINT(void);
 
 
 /* END Events */
