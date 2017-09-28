@@ -36,6 +36,7 @@
 #include "LED1.h"
 #include "WAIT1.h"
 #include "MCUC1.h"
+#include "LED2.h"
 
 #ifdef __cplusplus
 extern "C" {
