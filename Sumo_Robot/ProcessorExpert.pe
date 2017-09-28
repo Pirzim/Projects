@@ -34,7 +34,7 @@
     <GeneratedCodeFrozen>false</GeneratedCodeFrozen>
     <AssignInitComponentNameToPrph>true</AssignInitComponentNameToPrph>
     <UserInterface>CLASSIC</UserInterface>
-    <GenerateCodeBeforeBuild>false</GenerateCodeBeforeBuild>
+    <GenerateCodeBeforeBuild>true</GenerateCodeBeforeBuild>
     <SaveProjectBeforeGeneration>true</SaveProjectBeforeGeneration>
     <GenerateCodeGenLog>false</GenerateCodeGenLog>
     <DontWriteGeneratedModules lines_count="0" />
