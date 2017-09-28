@@ -52,8 +52,6 @@ int main(void)
 
 
   /* Versuch ein LED anzusteuern, welches am Port PTD0 angeschlossen ist*/
-  LED1_SetVal(LED1_DeviceData);
-  LED1_ClrVal(LED1_DeviceData);
 
 
 
@@ -71,7 +69,12 @@ int main(void)
   #endif
   /*** End of RTOS startup code.  ***/
   /*** Processor Expert end of main routine. DON'T MODIFY THIS CODE!!! ***/
-  for(;;){}
+  for(;;){
+	  WAIT1_Waitms(1000);
+	  LED1_ClrVal(LED1_DeviceData);
+	  WAIT1_Waitms(1000);
+	  LED1_SetVal(LED1_DeviceData);
+  }
   /*** Processor Expert end of main routine. DON'T WRITE CODE BELOW!!! ***/
 } /*** End of main routine. DO NOT MODIFY THIS TEXT!!! ***/
 
