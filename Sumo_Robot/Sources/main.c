@@ -30,10 +30,11 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
-#include "LED1.h"
 #include "WAIT1.h"
 #include "MCUC1.h"
-#include "LED2.h"
+#include "LED1.h"
+#include "LEDpin1.h"
+#include "BitIoLdd1.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"
@@ -49,10 +50,9 @@ int main(void)
 
   /*** Processor Expert internal initialization. DON'T REMOVE THIS CODE!!! ***/
   PE_low_level_init();
+
   /*** End of Processor Expert internal initialization.                    ***/
 
-
-  /* Versuch ein LED anzusteuern, welches am Port PTD0 angeschlossen ist*/
 
 
 
@@ -61,15 +61,19 @@ int main(void)
 
 
   /* Write your code here */
-  /* For example: for(;;) { } */
+
   for(;;){
+	  LED1_On();
 	  WAIT1_Waitms(500);
-	  LED1_ClrVal(LED1_DeviceData);
-	  LED2_ClrVal(LED2_DeviceData);
+	  LED1_Off();
 	  WAIT1_Waitms(500);
-	  LED1_SetVal(LED1_DeviceData);
-	  LED2_SetVal(LED2_DeviceData);
   }
+
+
+
+
+
+
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
   /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
   #ifdef PEX_RTOS_START
