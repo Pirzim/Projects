@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Sumo_Remote</name>
+	<name>TEAM_Remote</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -32,9 +32,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Sources/Common_Files</name>
+			<name>Sources/TEAM_Common</name>
 			<type>2</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Common_Files</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/TEAM_Common</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
