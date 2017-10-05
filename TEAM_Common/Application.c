@@ -185,9 +185,15 @@ void APP_Start(void) {
   __asm volatile("cpsie i"); /* enable interrupts */
 
   for(;;) {
-	  LEDPin1_NegVal();
-	  LEDPin2_PutVal(!LEDPin1_GetVal());
-	  WAIT1_Waitms(500);
+	  if(!SW1_GetVal()){
+		  LEDPin1_NegVal();
+		  LEDPin2_PutVal(!LEDPin1_GetVal());
+		  WAIT1_Waitms(500);
+	  }
+	  else{
+		  LEDPin1_SetVal();
+		  LEDPin2_SetVal();
+	  }
   }
 }
 
