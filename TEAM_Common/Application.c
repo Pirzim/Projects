@@ -184,30 +184,19 @@ void APP_Start(void) {
   APP_AdoptToHardware();
   __asm volatile("cpsie i"); /* enable interrupts */
 
-#if PL_LOCAL_CONFIG_BOARD_IS_REMOTE
   for(;;) {
-	  if(!SW1_GetVal()){
-		  LEDPin1_NegVal();
-		  WAIT1_Waitms(500);
+	  if(KEY1_Get() || KEY2_Get()|| KEY3_Get()|| KEY4_Get()|| KEY5_Get()||KEY6_Get()|| KEY7_Get()){
+		  LED1_Neg();
+		  LED2_Put(LED1_Get());
+		  WAIT1_Waitms(200);
 	  }
 	  else{
-		  LEDPin1_SetVal();
+		  LED1_Off();
+		  LED2_Off();
 	  }
   }
-#endif
-#if PL_LOCAL_CONFIG_BOARD_IS_ROBO
-  for(;;) {
-	  if(!SW1_GetVal()){
-		  LEDPin1_NegVal();
-		  LEDPin2_PutVal(!LEDPin1_GetVal());
-		  WAIT1_Waitms(500);
-	  }
-	  else{
-		  LEDPin1_SetVal();
-		  LEDPin2_SetVal();
-	  }
-  }
-#endif
+
+  PL_Deinit();
 }
 
 
