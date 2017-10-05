@@ -185,9 +185,17 @@ void APP_Start(void) {
   __asm volatile("cpsie i"); /* enable interrupts */
 
 #if PL_LOCAL_CONFIG_BOARD_IS_REMOTE
-
+  for(;;) {
+	  if(!SW1_GetVal()){
+		  LEDPin1_NegVal();
+		  WAIT1_Waitms(500);
+	  }
+	  else{
+		  LEDPin1_SetVal();
+	  }
+  }
 #endif
-#if PL_LOCAL_CONFIG_BOARD_IS_ROBOT
+#if PL_LOCAL_CONFIG_BOARD_IS_ROBO
   for(;;) {
 	  if(!SW1_GetVal()){
 		  LEDPin1_NegVal();
