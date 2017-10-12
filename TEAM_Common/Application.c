@@ -184,16 +184,9 @@ void APP_Start(void) {
   APP_AdoptToHardware();
   __asm volatile("cpsie i"); /* enable interrupts */
 
+  void (*APP_Handler_Event)(EVNT_Handle event) = APP_EventHandler;
   for(;;) {
-	  if(KEY1_Get() || KEY2_Get()|| KEY3_Get()|| KEY4_Get()|| KEY5_Get()||KEY6_Get()|| KEY7_Get()){
-		  LED1_Neg();
-		  LED2_Put(LED1_Get());
-		  WAIT1_Waitms(200);
-	  }
-	  else{
-		  LED1_Off();
-		  LED2_Off();
-	  }
+	  EVNT_HandleEvent(APP_Handler_Event, TRUE);
   }
 
   PL_Deinit();
