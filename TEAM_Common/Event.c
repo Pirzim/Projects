@@ -28,28 +28,35 @@ static EVNT_MemUnit EVNT_Events[((EVNT_NOF_EVENTS-1)/EVNT_MEM_UNIT_NOF_BITS)+1];
   (EVNT_Events[(event)/EVNT_MEM_UNIT_NOF_BITS]&(((1u<<(EVNT_MEM_UNIT_NOF_BITS-1))>>(((event)%EVNT_MEM_UNIT_NOF_BITS))))) /*!< Return TRUE if event is set */
 
 void EVNT_SetEvent(EVNT_Handle event) {
-  /*! \todo Make it reentrant */
+  EnterCritical();		// schaltet Interrupts während kritischer Funktion aus
   SET_EVENT(event);
+  ExitCritical();		// bringt Interrupts in den Ausgangszustand
 }
 
 void EVNT_ClearEvent(EVNT_Handle event) {
-  /*! \todo Make it reentrant */
+  EnterCritical();		// schaltet Interrupts während kritischer Funktion aus
   CLR_EVENT(event);
+  ExitCritical();		// bringt Interrupts in den Ausgangszustand
 }
 
 bool EVNT_EventIsSet(EVNT_Handle event) {
-  /*! \todo Make it reentrant */
-   return GET_EVENT(event);
+   bool IsSet;
+   EnterCritical();		// schaltet Interrupts während kritischer Funktion aus
+   IsSet = GET_EVENT(event);
+   ExitCritical();		// bringt Interrupts in den Ausgangszustand
+   return IsSet;
+
 }
 
 bool EVNT_EventIsSetAutoClear(EVNT_Handle event) {
   bool res;
 
-  /*! \todo Make it reentrant */
+  EnterCritical();		// schaltet Interrupts während kritischer Funktion aus
   res = GET_EVENT(event);
   if (res) {
     CLR_EVENT(event); /* automatically clear event */
   }
+  ExitCritical();		// bringt Interrupts in den Ausgangszustand
   return res;
 }
 

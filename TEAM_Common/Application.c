@@ -185,6 +185,9 @@ void APP_Start(void) {
   __asm volatile("cpsie i"); /* enable interrupts */
 
   void (*APP_Handler_Event)(EVNT_Handle event) = APP_EventHandler;
+
+  EVNT_SetEvent(EVNT_STARTUP);
+
   for(;;) {
 	  EVNT_HandleEvent(APP_Handler_Event, TRUE);
   }
