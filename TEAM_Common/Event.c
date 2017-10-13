@@ -63,7 +63,7 @@ bool EVNT_EventIsSetAutoClear(EVNT_Handle event) {
 void EVNT_HandleEvent(void (*callback)(EVNT_Handle), bool clearEvent) {
    /* Handle the one with the highest priority. Zero is the event with the highest priority. */
    EVNT_Handle event;
-   /*! \todo Make it reentrant */
+   EnterCritical();		// schaltet Interrupts während kritischer Funktion aus
    for (event=(EVNT_Handle)0; event<EVNT_NOF_EVENTS; event++) { /* does a test on every event */
      if (GET_EVENT(event)) { /* event present? */
        if (clearEvent) {
@@ -72,6 +72,7 @@ void EVNT_HandleEvent(void (*callback)(EVNT_Handle), bool clearEvent) {
        break; /* get out of loop */
      }
    }
+   ExitCritical();		// bringt Interrupts in den Ausgangszustand
    if (event != EVNT_NOF_EVENTS) {
      callback(event);
      /* Note: if the callback sets the event, we will get out of the loop.

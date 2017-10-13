@@ -48,6 +48,7 @@ extern "C" {
 **         interrupt] property is set to 'Enabled'.
 */
 /* ===================================================================*/
+#include "Event.h"
 void Cpu_OnNMIINT(void)
 {
   /* Write your code here ... */
@@ -71,6 +72,24 @@ void Cpu_OnNMIINT(void)
 void TI1_OnInterrupt(void)
 {
   /* Write your code here ... */
+}
+
+/*
+** ===================================================================
+**     Event       :  SW1_OnInterrupt (module Events)
+**
+**     Component   :  SW1 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void SW1_OnInterrupt(void)
+{
+	EVNT_SetEvent(EVNT_SW1_PRESSED);	// event hinzufügen bei sw 1 gedrückt
+
 }
 
 /* END Events */

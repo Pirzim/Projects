@@ -93,9 +93,15 @@ void APP_EventHandler(EVNT_Handle event) {
     LED2_Neg();
     break;
 #if PL_CONFIG_NOF_KEYS>=1
-  case EVNT_SW1_PRESSED:
+  case EVNT_SW1_PRESSED:{
+	  int i;
+      for (i=0;i<5;i++) {	// Hinzugefügt um led zu toggeln
+        LED1_Neg();
+        WAIT1_Waitms(50);
+      }
     BtnMsg(1, "pressed");
      break;
+  }
 #endif
     default:
       break;
@@ -184,7 +190,7 @@ void APP_Start(void) {
   APP_AdoptToHardware();
   __asm volatile("cpsie i"); /* enable interrupts */
 
-  void (*APP_Handler_Event)(EVNT_Handle event) = APP_EventHandler;
+  void (*APP_Handler_Event)(EVNT_Handle event) = APP_EventHandler; // erstellt funktionspointer und zeigt auf APP_EventHandler
 
   EVNT_SetEvent(EVNT_STARTUP);
 

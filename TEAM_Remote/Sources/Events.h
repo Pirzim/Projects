@@ -50,7 +50,7 @@
 #include "ASerialLdd1.h"
 #include "RTT1.h"
 #include "SW1.h"
-#include "BitIoLdd10.h"
+#include "ExtIntLdd1.h"
 #include "SW2.h"
 #include "BitIoLdd11.h"
 #include "SW3.h"
@@ -111,6 +111,20 @@ void Cpu_OnNMIINT(void);
 ** ===================================================================
 */
 void TI1_OnInterrupt(void);
+
+void SW1_OnInterrupt(void);
+/*
+** ===================================================================
+**     Event       :  SW1_OnInterrupt (module Events)
+**
+**     Component   :  SW1 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
 
 /* END Events */
 
