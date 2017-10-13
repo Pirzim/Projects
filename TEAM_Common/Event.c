@@ -41,11 +41,11 @@ void EVNT_ClearEvent(EVNT_Handle event) {
 
 bool EVNT_EventIsSet(EVNT_Handle event) {
    bool IsSet;
-   EnterCritical();		// schaltet Interrupts während kritischer Funktion aus
+   CS1_CriticalVariable();
+   CS1_EnterCritical();		// schaltet Interrupts während kritischer Funktion aus
    IsSet = GET_EVENT(event);
-   ExitCritical();		// bringt Interrupts in den Ausgangszustand
+   CS1_ExitCritical();		// bringt Interrupts in den Ausgangszustand
    return IsSet;
-
 }
 
 bool EVNT_EventIsSetAutoClear(EVNT_Handle event) {
@@ -72,7 +72,10 @@ void EVNT_HandleEvent(void (*callback)(EVNT_Handle), bool clearEvent) {
        break; /* get out of loop */
      }
    }
-   ExitCritical();		// bringt Interrupts in den Ausgangszustand
+   ExitCritical();
+   // bringt Interrupts in den Ausgangszustand,
+   // wird hier vor dem Callback gemacht da man bei Callback funktion die Zeit nicht abschätzen kann!!!
+
    if (event != EVNT_NOF_EVENTS) {
      callback(event);
      /* Note: if the callback sets the event, we will get out of the loop.
@@ -83,7 +86,8 @@ void EVNT_HandleEvent(void (*callback)(EVNT_Handle), bool clearEvent) {
 
 void EVNT_Init(void) {
   uint8_t i;
-
+  // die Events werden vermutlich initialisiert bevor alle Interrupts eingeschalten werden.
+  // deshalb wird hier die Funktion nicht Reentrant gemacht!
   i = 0;
   do {
     EVNT_Events[i] = 0; /* initialize data structure */

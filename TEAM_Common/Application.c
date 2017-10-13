@@ -81,14 +81,15 @@ void APP_EventHandler(EVNT_Handle event) {
   /*! \todo handle events */
   switch(event) {
   case EVNT_STARTUP:
-    {
+  {
       int i;
-      for (i=0;i<5;i++) {
+      for (i=0;i<15;i++) {
         LED1_Neg();
         WAIT1_Waitms(50);
       }
       LED1_Off();
-    }
+    break;
+  }
   case EVNT_LED_HEARTBEAT:
     LED2_Neg();
     break;
@@ -191,8 +192,9 @@ void APP_Start(void) {
   __asm volatile("cpsie i"); /* enable interrupts */
 
   void (*APP_Handler_Event)(EVNT_Handle event) = APP_EventHandler; // erstellt funktionspointer und zeigt auf APP_EventHandler
-
-  EVNT_SetEvent(EVNT_STARTUP);
+  //TI1_Enable();
+  //TI1_OnInterrupt();
+  EVNT_SetEvent(EVNT_STARTUP);		// Währent aufstarten wird ein Startup Event erzeugt
 
   for(;;) {
 	  EVNT_HandleEvent(APP_Handler_Event, TRUE);
