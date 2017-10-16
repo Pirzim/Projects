@@ -13,7 +13,7 @@
 #if PL_CONFIG_HAS_TIMER
 
 /*! \todo Check timer tick frequency */
-#define TMR_TICK_MS  200					// Muesste hier nicht 1000 stehen? in TI1 ist 1000ms als periodendauer eingetragen?!
+#define TMR_TICK_MS  200
   /*!< we get called every TMR_TICK_MS ms */
 
 /*! \brief Function called from timer interrupt every TMR_TICK_MS. */
