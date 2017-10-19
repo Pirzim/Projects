@@ -276,7 +276,6 @@ void APP_Start(void) {
   EVNT_SetEvent(EVNT_STARTUP);		// Währent aufstarten wird ein Startup Event erzeugt
 
   for(;;) {
-	  KEY_Scan();
 	  EVNT_HandleEvent(APP_Handler_Event, TRUE);
   }
 
