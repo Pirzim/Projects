@@ -96,44 +96,53 @@ void APP_EventHandler(EVNT_Handle event) {
 #if PL_CONFIG_NOF_KEYS>=1
   case EVNT_SW1_PRESSED:{
 	  int i;
-      for (i=0;i<1;i++) {	// Hinzugefügt um led zu toggeln
+      for (i=0;i<2;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
         WAIT1_Waitms(50);
       }
     BtnMsg(1, "pressed");
+     break;
+  }
+  case EVNT_SW1_LPRESSED:{
+	  int i;
+      for (i=0;i<2;i++) {	// Hinzugefügt um led zu toggeln
+        LED1_Neg();
+        WAIT1_Waitms(1000);
+      }
+    BtnMsg(1, "long_pressed");
      break;
   }
 #endif
 #if PL_CONFIG_NOF_KEYS>=2
   case EVNT_SW2_PRESSED:{
 	  int i;
-      for (i=0;i<3;i++) {	// Hinzugefügt um led zu toggeln
+      for (i=0;i<4;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
         WAIT1_Waitms(50);
       }
-    BtnMsg(1, "pressed");
+    BtnMsg(2, "pressed");
      break;
   }
 #endif
 #if PL_CONFIG_NOF_KEYS>=3
   case EVNT_SW3_PRESSED:{
 	  int i;
-      for (i=0;i<5;i++) {	// Hinzugefügt um led zu toggeln
+      for (i=0;i<6;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
         WAIT1_Waitms(50);
       }
-    BtnMsg(1, "pressed");
+    BtnMsg(3, "pressed");
      break;
   }
 #endif
 #if PL_CONFIG_NOF_KEYS>=4
   case EVNT_SW4_PRESSED:{
 	  int i;
-      for (i=0;i<7;i++) {	// Hinzugefügt um led zu toggeln
+      for (i=0;i<8;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
         WAIT1_Waitms(50);
       }
-    BtnMsg(1, "pressed");
+    BtnMsg(4, "pressed");
      break;
 
   }
@@ -141,11 +150,11 @@ void APP_EventHandler(EVNT_Handle event) {
 #if PL_CONFIG_NOF_KEYS>=5
   case EVNT_SW5_PRESSED:{
 	  int i;
-      for (i=0;i<9;i++) {	// Hinzugefügt um led zu toggeln
+      for (i=0;i<10;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
         WAIT1_Waitms(50);
       }
-    BtnMsg(1, "pressed");
+    BtnMsg(5, "pressed");
      break;
 
   }
@@ -153,11 +162,11 @@ void APP_EventHandler(EVNT_Handle event) {
 #if PL_CONFIG_NOF_KEYS>=6
   case EVNT_SW6_PRESSED:{
 	  int i;
-      for (i=0;i<11;i++) {	// Hinzugefügt um led zu toggeln
+      for (i=0;i<12;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
         WAIT1_Waitms(50);
       }
-    BtnMsg(1, "pressed");
+    BtnMsg(6, "pressed");
      break;
 
   }
@@ -165,11 +174,11 @@ void APP_EventHandler(EVNT_Handle event) {
 #if PL_CONFIG_NOF_KEYS>=7
   case EVNT_SW7_PRESSED:{
 	  int i;
-      for (i=0;i<13;i++) {	// Hinzugefügt um led zu toggeln
+      for (i=0;i<14;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
         WAIT1_Waitms(50);
       }
-    BtnMsg(1, "pressed");
+    BtnMsg(7, "pressed");
      break;
 
   }
