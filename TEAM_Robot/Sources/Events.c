@@ -30,6 +30,7 @@
 #include "Events.h"
 
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -49,6 +50,9 @@ extern "C" {
 **         interrupt] property is set to 'Enabled'.
 */
 /* ===================================================================*/
+
+#include "Keys.h"
+
 void Cpu_OnNMIINT(void)
 {
   /* Write your code here ... */
@@ -73,6 +77,23 @@ void Cpu_OnNMIINT(void)
 void TI1_OnInterrupt(void)
 {
 	TMR_OnInterrupt();
+}
+
+/*
+** ===================================================================
+**     Event       :  SW1_OnInterrupt (module Events)
+**
+**     Component   :  SW1 [ExtInt]
+**     Description :
+**         This event is called when an active signal edge/level has
+**         occurred.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void SW1_OnInterrupt(void)
+{
+	KEY_OnInterrupt(KEY_BTN1);
 }
 
 /* END Events */

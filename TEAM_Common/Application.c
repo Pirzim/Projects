@@ -100,8 +100,9 @@ void APP_EventHandler(EVNT_Handle event) {
         LED1_Neg();
         WAIT1_Waitms(50);
       }
-    BtnMsg(1, "pressed");
-     break;
+    //BtnMsg(1, "schwuuul!");
+      CLS1_SendStr("Schwuuul! ",CLS1_GetStdio()->stdOut);
+      break;
   }
   case EVNT_SW1_LPRESSED:{
 	  int i;
@@ -275,6 +276,7 @@ void APP_Start(void) {
   //TI1_OnInterrupt();
   KEY_EnableInterrupts();
   EVNT_SetEvent(EVNT_STARTUP);		// Währent aufstarten wird ein Startup Event erzeugt
+  CLS1_SendStr("Dä Zimmermaa isch: ",CLS1_GetStdio()->stdOut);
 
   for(;;) {
 	  EVNT_HandleEvent(APP_Handler_Event, TRUE);
