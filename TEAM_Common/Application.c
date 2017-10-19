@@ -104,6 +104,36 @@ void APP_EventHandler(EVNT_Handle event) {
      break;
   }
 #endif
+#if PL_CONFIG_NOF_KEYS>=2
+  case EVNT_SW2_PRESSED:{
+
+  }
+#endif
+#if PL_CONFIG_NOF_KEYS>=3
+  case EVNT_SW3_PRESSED:{
+
+  }
+#endif
+#if PL_CONFIG_NOF_KEYS>=4
+  case EVNT_SW4_PRESSED:{
+
+  }
+#endif
+#if PL_CONFIG_NOF_KEYS>=5
+  case EVNT_SW5_PRESSED:{
+
+  }
+#endif
+#if PL_CONFIG_NOF_KEYS>=6
+  case EVNT_SW6_PRESSED:{
+
+  }
+#endif
+#if PL_CONFIG_NOF_KEYS>=7
+  case EVNT_SW7_PRESSED:{
+
+  }
+#endif
     default:
       break;
    } /* switch */
@@ -197,6 +227,7 @@ void APP_Start(void) {
   EVNT_SetEvent(EVNT_STARTUP);		// Währent aufstarten wird ein Startup Event erzeugt
 
   for(;;) {
+	  KEY_Scan();
 	  EVNT_HandleEvent(APP_Handler_Event, TRUE);
   }
 
