@@ -28,8 +28,18 @@
 
 void KEY_Scan(void) {
 #if PL_CONFIG_NOF_KEYS>=1 && !PL_CONFIG_KEY_1_ISR
-  if (KEY1_Get()) { /* key pressed */
-    EVNT_SetEvent(EVNT_SW1_PRESSED);
+  if (KEY1_Get()) {/* key pressed */
+	  int cnt = 0;
+	  while(KEY1_Get()){
+		  WAIT1_Waitms(1);
+		  cnt++;
+	  }
+	  if(cnt<=1000){
+		  EVNT_SetEvent(EVNT_SW1_PRESSED);
+	  }
+	  else{
+		  EVNT_SetEvent(EVNT_SW1_LPRESSED);
+	  }
   }
 #endif
 #if PL_CONFIG_NOF_KEYS>=2 && !PL_CONFIG_KEY_2_ISR
