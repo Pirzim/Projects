@@ -48,7 +48,6 @@ extern "C" {
 **         interrupt] property is set to 'Enabled'.
 */
 /* ===================================================================*/
-#include "Event.h"
 #include "Keys.h"
 void Cpu_OnNMIINT(void)
 {
