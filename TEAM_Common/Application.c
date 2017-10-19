@@ -279,6 +279,7 @@ void APP_Start(void) {
   for(;;) {
 	  EVNT_HandleEvent(APP_Handler_Event, TRUE);
 	  KEY_Scan();
+	  SEGGER_RTT_WriteString(0, "Hello World from SEGGER RTT!\r\n");
   }
 
   PL_Deinit();
