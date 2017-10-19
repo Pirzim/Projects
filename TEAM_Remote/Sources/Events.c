@@ -49,6 +49,7 @@ extern "C" {
 */
 /* ===================================================================*/
 #include "Event.h"
+#include "Keys.h"
 void Cpu_OnNMIINT(void)
 {
   /* Write your code here ... */
@@ -88,7 +89,7 @@ void TI1_OnInterrupt(void)
 */
 void SW1_OnInterrupt(void)
 {
-	EVNT_SetEvent(EVNT_SW1_PRESSED);	// event hinzufügen bei sw 1 gedrückt
+	KEY_OnInterrupt(KEY_BTN1);
 
 }
 
@@ -106,7 +107,7 @@ void SW1_OnInterrupt(void)
 */
 void SW5_OnInterrupt(void)
 {
-  /* Write your code here ... */
+	KEY_OnInterrupt(KEY_BTN5);
 }
 
 /*
@@ -123,7 +124,7 @@ void SW5_OnInterrupt(void)
 */
 void SW4_OnInterrupt(void)
 {
-  /* Write your code here ... */
+	KEY_OnInterrupt(KEY_BTN4);
 }
 
 /*
@@ -140,7 +141,7 @@ void SW4_OnInterrupt(void)
 */
 void SW3_OnInterrupt(void)
 {
-  /* Write your code here ... */
+	KEY_OnInterrupt(KEY_BTN3);
 }
 
 /*
@@ -157,7 +158,7 @@ void SW3_OnInterrupt(void)
 */
 void SW2_OnInterrupt(void)
 {
-  /* Write your code here ... */
+	KEY_OnInterrupt(KEY_BTN2);
 }
 
 /* END Events */
