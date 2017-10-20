@@ -272,11 +272,10 @@ void APP_Start(void) {
   __asm volatile("cpsie i"); /* enable interrupts */
 
   void (*APP_Handler_Event)(EVNT_Handle event) = APP_EventHandler; // erstellt funktionspointer und zeigt auf APP_EventHandler
-  //TI1_Enable();
-  //TI1_OnInterrupt();
   KEY_EnableInterrupts();
   EVNT_SetEvent(EVNT_STARTUP);		// Währent aufstarten wird ein Startup Event erzeugt
-  CLS1_SendStr("Dä Zimmermaa isch: ",CLS1_GetStdio()->stdOut);
+  TRG_Init();						// Trigger initialisierung
+  BUZ_Init();						// Buzzer initialisierung
 
   for(;;) {
 	  EVNT_HandleEvent(APP_Handler_Event, TRUE);
