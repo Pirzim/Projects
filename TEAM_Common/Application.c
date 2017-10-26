@@ -88,7 +88,7 @@ void APP_EventHandler(EVNT_Handle event) {
         WAIT1_Waitms(50);
       }
       LED1_Off();
-      BUZ_PlayTune(BUZ_TUNE_WELCOME);
+      //BUZ_PlayTune(BUZ_TUNE_WELCOME);
     break;
   }
   case EVNT_LED_HEARTBEAT:
@@ -101,7 +101,7 @@ void APP_EventHandler(EVNT_Handle event) {
         LED1_Neg();
         WAIT1_Waitms(50);
       }
-      BUZ_PlayTune(BUZ_TUNE_BUTTON);
+      BUZ_PlayTune(BUZ_TUNE_AENTLISONG);
     BtnMsg(1, "pressed");
       break;
   }
