@@ -30,41 +30,54 @@ typedef struct {
 
 static const BUZ_Tune MelodyWelcome[] =
 { /* freq, ms */
-    {300,500},
-    {500,200},
-    {300,100},
-    {200,300},
+	    {300,500},
+	    {500,200},
+	    {300,100},
+	    {200,300},
+	    {500,400},
+	    {300,100},
+	    {200,300},
+	    {300,100},
+	    {200,300},
+	    {500,400},
+	    {200,300},
+	    {0,100},
+	    {200,300},
+	    {0,100},
+
+	    {250,300},
+	    {0,100},
+	    {250,300},
+	    {0,100},
+
+	    {300,800},
+	    {0,100},
+	    {300,800},
+	    {0,100},
+
+	    {500,300},
+	    {0,100},
+	    {500,300},
+	    {0,100},
+	    {500,300},
+	    {0,100},
+	    {500,300},
+	    {0,100},
+	    {500,600},
+	    {0,100},
+};
+
+
+static const BUZ_Tune MelodyAentliSong[] =
+{ /* freq, ms */
+    {100,200},
+    {200,200},
+    {300,200},
+    {400,200},
     {500,400},
-    {300,100},
-    {200,300},
-    {300,100},
-    {200,300},
-    {500,400},
-    {200,300},
-    {0,100},
-    {200,300},
-    {0,100},
+	{10,100},
+	{500,400},
 
-    {250,300},
-    {0,100},
-    {250,300},
-    {0,100},
-
-    {300,800},
-    {0,100},
-    {300,800},
-    {0,100},
-
-    {500,300},
-    {0,100},
-    {500,300},
-    {0,100},
-    {500,300},
-    {0,100},
-    {500,300},
-    {0,100},
-    {500,600},
-    {0,100},
 };
 
 static const BUZ_Tune MelodyButton[] =
@@ -93,6 +106,7 @@ typedef struct {
 
 static MelodyDesc BUZ_Melodies[] = {
   {0, sizeof(MelodyWelcome)/sizeof(MelodyWelcome[0]),         {0, 0}, MelodyWelcome}, /* BUZ_TUNE_WELCOME */
+  {0, sizeof(MelodyAentliSong)/sizeof(MelodyAentliSong[0]),         {0, 0}, MelodyAentliSong}, /* BUZ_TUNE_AENTLISONG */
   {0, sizeof(MelodyButton)/sizeof(MelodyButton[0]),           {0, 0}, MelodyButton}, /* BUZ_TUNE_BUTTON */
   {0, sizeof(MelodyButtonLong)/sizeof(MelodyButtonLong[0]),   {0, 0}, MelodyButtonLong}, /* BUZ_TUNE_BUTTON_LONG */
 };

@@ -34,6 +34,7 @@ uint8_t BUZ_Beep(uint16_t freqHz, uint16_t durationMs);
 
 typedef enum {
   BUZ_TUNE_WELCOME,
+  BUZ_TUNE_AENTLISONG,
   BUZ_TUNE_BUTTON,
   BUZ_TUNE_BUTTON_LONG,
   BUZ_TUNE_NOF_TUNES
