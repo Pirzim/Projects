@@ -180,7 +180,10 @@ void APP_EventHandler(EVNT_Handle event) {
       }
     BtnMsg(7, "pressed");
      break;
-
+#if PL_CONFIG_HAS_TIMER
+  case EVNT_TMR_1S:
+  	  LED1_Neg();
+#endif
   }
 #endif
     default:
