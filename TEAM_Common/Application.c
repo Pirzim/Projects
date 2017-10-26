@@ -88,6 +88,7 @@ void APP_EventHandler(EVNT_Handle event) {
         WAIT1_Waitms(50);
       }
       LED1_Off();
+      BUZ_PlayTune(BUZ_TUNE_WELCOME);
     break;
   }
   case EVNT_LED_HEARTBEAT:
@@ -95,17 +96,12 @@ void APP_EventHandler(EVNT_Handle event) {
     break;
 #if PL_CONFIG_NOF_KEYS>=1
   case EVNT_SW1_PRESSED:{
-	  int i, j;
+	  int i;
       for (i=0;i<2;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
         WAIT1_Waitms(50);
       }
-    if(PL_LOCAL_CONFIG_BOARD_IS_ROBO){
-    	BUZ_PlayTune(j);
-    	if(j < BUZ_TUNE_NOF_TUNES) j++;
-    	else j= 0;
-
-    }
+      BUZ_PlayTune(BUZ_TUNE_BUTTON);
     BtnMsg(1, "pressed");
       break;
   }
@@ -115,6 +111,7 @@ void APP_EventHandler(EVNT_Handle event) {
         LED1_Neg();
         WAIT1_Waitms(1000);
       }
+      BUZ_PlayTune(BUZ_TUNE_BUTTON_LONG);
     BtnMsg(1, "long_pressed");
      break;
   }
