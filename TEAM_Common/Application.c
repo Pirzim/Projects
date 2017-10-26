@@ -95,11 +95,17 @@ void APP_EventHandler(EVNT_Handle event) {
     break;
 #if PL_CONFIG_NOF_KEYS>=1
   case EVNT_SW1_PRESSED:{
-	  int i;
+	  int i, j;
       for (i=0;i<2;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
         WAIT1_Waitms(50);
       }
+    if(PL_LOCAL_CONFIG_BOARD_IS_ROBO){
+    	BUZ_PlayTune(j);
+    	if(j < BUZ_TUNE_NOF_TUNES) j++;
+    	else j= 0;
+
+    }
     BtnMsg(1, "pressed");
       break;
   }
