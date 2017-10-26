@@ -100,8 +100,7 @@ void APP_EventHandler(EVNT_Handle event) {
         LED1_Neg();
         WAIT1_Waitms(50);
       }
-    //BtnMsg(1, "schwuuul!");
-      CLS1_SendStr("Schwuuul! ",CLS1_GetStdio()->stdOut);
+    BtnMsg(1, "pressed");
       break;
   }
   case EVNT_SW1_LPRESSED:{
@@ -274,8 +273,6 @@ void APP_Start(void) {
   void (*APP_Handler_Event)(EVNT_Handle event) = APP_EventHandler; // erstellt funktionspointer und zeigt auf APP_EventHandler
   KEY_EnableInterrupts();
   EVNT_SetEvent(EVNT_STARTUP);		// Währent aufstarten wird ein Startup Event erzeugt
-  TRG_Init();						// Trigger initialisierung
-  BUZ_Init();						// Buzzer initialisierung
 
   for(;;) {
 	  EVNT_HandleEvent(APP_Handler_Event, TRUE);
