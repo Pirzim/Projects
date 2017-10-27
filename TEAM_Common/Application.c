@@ -103,6 +103,7 @@ void APP_EventHandler(EVNT_Handle event) {
       }
       BUZ_PlayTune(BUZ_TUNE_AENTLISONG);
     BtnMsg(1, "pressed");
+    CLS1_SendStr("AentliSong am Brennne", CLS1_GetStdio()->stdOut);
       break;
   }
   case EVNT_SW1_LPRESSED:{
