@@ -101,7 +101,7 @@ void APP_EventHandler(EVNT_Handle event) {
         LED1_Neg();
         WAIT1_Waitms(50);
       }
-      BUZ_PlayTune(BUZ_TUNE_AENTLISONG);
+      BUZ_PlayTune(BUZ_TUNE_MARIO);
     BtnMsg(1, "pressed");
     CLS1_SendStr("AentliSong am Brennne", CLS1_GetStdio()->stdOut);
       break;

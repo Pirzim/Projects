@@ -26,7 +26,6 @@ void TMR_OnInterrupt(void) {
   TRG_AddTick();
   static unsigned int cntr = 0;
   /* this one gets called from an interrupt!!!! */
-  /*! \todo Add code for a blinking LED here */
   cntr++;
   if(cntr == (1000/TMR_TICK_MS)){      // 1000ms = 1s  Event wird alle Sekunden eingetragen.
 	  EVNT_SetEvent(EVNT_TMR_1S);
