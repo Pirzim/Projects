@@ -53,6 +53,9 @@
   #include "Reflectance.h"
 #endif
 #include "Sumo.h"
+#if PL_CONFIG_HAS_TRIGGER
+	#include "Trigger.h"
+#endif
 
 #if PL_CONFIG_HAS_EVENTS
 
@@ -89,10 +92,16 @@ void APP_EventHandler(EVNT_Handle event) {
       }
       LED1_Off();
       //BUZ_PlayTune(BUZ_TUNE_WELCOME);
+      EVNT_SetEvent(EVNT_LED_HEARTBEAT);
     break;
   }
   case EVNT_LED_HEARTBEAT:
     LED2_Neg();
+    if(LED2_Get()){
+    	TRG_SetTrigger(TRG_HEART_BEAT, 100/TRG_TICKS_MS, APP_EventHandler, (TRG_CallBackDataPtr)EVNT_LED_HEARTBEAT);
+    }else{
+    	TRG_SetTrigger(TRG_HEART_BEAT, 900/TRG_TICKS_MS, APP_EventHandler, (TRG_CallBackDataPtr)EVNT_LED_HEARTBEAT);
+    }
     break;
 #if PL_CONFIG_NOF_KEYS>=1
   case EVNT_SW1_PRESSED:{

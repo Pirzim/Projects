@@ -224,11 +224,6 @@ void KEYDBNC_Process(void) {
 	if(KEYDBNC_FSMdata.state == DBNC_KEY_IDLE){
 		DBNC_Process(&KEYDBNC_FSMdata);
 	}
-  /** \todo check/call DBNC_Process(&KEYDBNC_FSMdata);
-   * But be careful: only if we are not debouncing, and if we have a key press if we are polling.
-   * And you will need to disable the keyboard interrupts too!
-   */
-  /*! \todo Only debounce if you are not debouncing already */
  }
 
 void KEYDBNC_Init(void) {

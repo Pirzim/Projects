@@ -52,6 +52,7 @@ extern "C" {
 /* ===================================================================*/
 
 #include "Keys.h"
+#include "timer.h"
 
 void Cpu_OnNMIINT(void)
 {
