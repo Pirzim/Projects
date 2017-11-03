@@ -221,7 +221,7 @@ static DBNC_FSMData KEYDBNC_FSMdata = {
 };
 
 void KEYDBNC_Process(void) {
-	if(KEYDBNC_FSMdata->state == DBNC_KEY_IDLE){
+	if(KEYDBNC_FSMdata.state == DBNC_KEY_IDLE){
 		DBNC_Process(&KEYDBNC_FSMdata);
 	}
   /** \todo check/call DBNC_Process(&KEYDBNC_FSMdata);
