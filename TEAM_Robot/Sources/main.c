@@ -38,11 +38,35 @@
 #include "ExtIntLdd1.h"
 #include "AS1.h"
 #include "ASerialLdd3.h"
+#include "FRTOS1.h"
+#include "RTOSCNTRLDD1.h"
 #include "TI1.h"
 #include "TimerIntLdd1.h"
 #include "TU1.h"
 #include "CLS1.h"
 #include "RTT1.h"
+#include "Q4CLeft.h"
+#include "C12.h"
+#include "BitIoLdd16.h"
+#include "C23.h"
+#include "BitIoLdd17.h"
+#include "Q4CRight.h"
+#include "C13.h"
+#include "BitIoLdd18.h"
+#include "C25.h"
+#include "BitIoLdd19.h"
+#include "MOTTU.h"
+#include "DIRL.h"
+#include "BitIoLdd12.h"
+#include "PWMR.h"
+#include "PwmLdd2.h"
+#include "DIRR.h"
+#include "BitIoLdd13.h"
+#include "PWML.h"
+#include "PwmLdd3.h"
+#include "QuadInt.h"
+#include "TimerIntLdd2.h"
+#include "TU_QuadInt.h"
 #include "TMOUT1.h"
 #include "USB1.h"
 #include "CDC1.h"
@@ -69,10 +93,20 @@
 #include "IO_Map.h"
 /* User includes (#include below this line is not maintained by Processor Expert) */
 #include "Application.h"
+#include "LED.h"
 
 void (*f)(void) = NULL;
 int i;
 
+#if PL_CONFIG_HAS_RTOS
+static void BlinkyTask(void * pvParameters){
+	(void*)pvParameters;
+	for(;;){
+		LED1_Neg();
+		vTaskDelay(pdMS_TO_TICKS(500));
+	}
+}
+#endif
 /*lint -save  -e970 Disable MISRA rule (6.3) checking. */
 int main(void)
 /*lint -restore Enable MISRA rule (6.3) checking. */
@@ -93,7 +127,26 @@ int main(void)
     __asm("nop");
   }
 #endif
-  APP_Start();
+
+#if PL_CONFIG_HAS_RTOS
+
+	xTaskHandle taskHndl;
+	if(!FRTOS1_xTaskCreate(BlinkyTask, "Blinki", configMINIMAL_STACK_SIZE+400, (void*)NULL, tskIDLE_PRIORITY+1, &taskHndl)){
+		for(;;);//error
+	}
+
+	xTaskHandle taskHndl1;
+	if(!FRTOS1_xTaskCreate(APP_Start, "Application", configMINIMAL_STACK_SIZE+400, (void*)NULL, tskIDLE_PRIORITY+1, &taskHndl1)){
+		for(;;);//error
+	}
+
+	vTaskStartScheduler();
+#else
+	APP_Start();
+#endif
+
+
+
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
   /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
   #ifdef PEX_RTOS_START

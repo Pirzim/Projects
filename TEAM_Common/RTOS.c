@@ -11,6 +11,7 @@
 #include "Application.h"
 
 void RTOS_Init(void) {
+
   /*! \todo Create tasks here */
 }
 

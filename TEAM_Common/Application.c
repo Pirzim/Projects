@@ -81,7 +81,7 @@ static void BtnMsg(int btn, const char *msg) {
 }
 
 void APP_EventHandler(EVNT_Handle event) {
-  /*! \todo handle events */
+	static bool mot_on;
   switch(event) {
   case EVNT_STARTUP:
   {
@@ -105,6 +105,19 @@ void APP_EventHandler(EVNT_Handle event) {
     break;
 #if PL_CONFIG_NOF_KEYS>=1
   case EVNT_SW1_PRESSED:{
+	  if(!mot_on){
+		  MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT), 10);
+		  MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT), 10);
+		  mot_on = TRUE;
+	  }else{
+		  MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT), 0);
+		  MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT), 0);
+		  mot_on = FALSE;
+	  }
+	  MOT_GetMotorHandle(MOT_MOTOR_LEFT)->DirPutVal(1);
+	  MOT_GetMotorHandle(MOT_MOTOR_RIGHT)->DirPutVal(1);
+	  MOT_GetMotorHandle(MOT_MOTOR_LEFT)->SetRatio16(MOT_GetMotorHandle(MOT_MOTOR_LEFT)->currPWMvalue);
+	  MOT_GetMotorHandle(MOT_MOTOR_RIGHT)->SetRatio16(MOT_GetMotorHandle(MOT_MOTOR_RIGHT)->currPWMvalue);
 	  int i;
       for (i=0;i<2;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
@@ -293,6 +306,9 @@ void APP_Start(void) {
   for(;;) {
 	  EVNT_HandleEvent(APP_Handler_Event, TRUE);
 	  KEY_Scan();
+#if PL_CONFIG_HAS_RTOS
+	  vTaskDelay(pdMS_TO_TICKS(10));
+#endif
   }
 
   PL_Deinit();
