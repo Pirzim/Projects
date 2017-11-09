@@ -13,7 +13,8 @@
 #include "Debounce.h"
 #include "Trigger.h"
 #include "Event.h"
-//#include "FRTOS1.h"
+#include "FRTOS1.h"
+#include "SYS1.h"
 
 /*!
  * \brief Returns the state of the keys. This directly reflects the value of the port

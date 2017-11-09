@@ -45,6 +45,7 @@
 #include "TU1.h"
 #include "CLS1.h"
 #include "RTT1.h"
+#include "SYS1.h"
 #include "Q4CLeft.h"
 #include "C12.h"
 #include "BitIoLdd16.h"
@@ -136,7 +137,7 @@ int main(void)
 	}
 
 	xTaskHandle taskHndl1;
-	if(!FRTOS1_xTaskCreate(APP_Start, "Application", configMINIMAL_STACK_SIZE+400, (void*)NULL, tskIDLE_PRIORITY+1, &taskHndl1)){
+	if(!FRTOS1_xTaskCreate(APP_Start, "Application", configMINIMAL_STACK_SIZE+800, (void*)NULL, tskIDLE_PRIORITY+2, &taskHndl1)){
 		for(;;);//error
 	}
 

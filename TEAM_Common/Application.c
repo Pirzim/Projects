@@ -114,8 +114,8 @@ void APP_EventHandler(EVNT_Handle event) {
 		  MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT), 0);
 		  mot_on = FALSE;
 	  }
-	  MOT_GetMotorHandle(MOT_MOTOR_LEFT)->DirPutVal(1);
-	  MOT_GetMotorHandle(MOT_MOTOR_RIGHT)->DirPutVal(1);
+	  //MOT_GetMotorHandle(MOT_MOTOR_LEFT)->DirPutVal(1);
+	  //MOT_GetMotorHandle(MOT_MOTOR_RIGHT)->DirPutVal(1);
 	  MOT_GetMotorHandle(MOT_MOTOR_LEFT)->SetRatio16(MOT_GetMotorHandle(MOT_MOTOR_LEFT)->currPWMvalue);
 	  MOT_GetMotorHandle(MOT_MOTOR_RIGHT)->SetRatio16(MOT_GetMotorHandle(MOT_MOTOR_RIGHT)->currPWMvalue);
 	  int i;
@@ -123,9 +123,9 @@ void APP_EventHandler(EVNT_Handle event) {
         LED1_Neg();
         WAIT1_Waitms(50);
       }
-      BUZ_PlayTune(BUZ_TUNE_MARIO);
+      //BUZ_PlayTune(BUZ_TUNE_MARIO);
     BtnMsg(1, "pressed");
-    CLS1_SendStr("Mario am Brennne\r\n", CLS1_GetStdio()->stdOut);
+    //CLS1_SendStr("Mario am Brennne\r\n", CLS1_GetStdio()->stdOut);
       break;
   }
   case EVNT_SW1_LPRESSED:{
