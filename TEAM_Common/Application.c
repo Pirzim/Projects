@@ -81,14 +81,15 @@ static void BtnMsg(int btn, const char *msg) {
 }
 
 void APP_EventHandler(EVNT_Handle event) {
-	static bool mot_on;
+	//static bool mot_on;
   switch(event) {
   case EVNT_STARTUP:
   {
       int i;
       for (i=0;i<15;i++) {
         LED1_Neg();
-        WAIT1_Waitms(50);
+        //WAIT1_Waitms(50);
+        vTaskDelay(pdMS_TO_TICKS(50));
       }
       LED1_Off();
       //BUZ_PlayTune(BUZ_TUNE_WELCOME);
@@ -98,41 +99,29 @@ void APP_EventHandler(EVNT_Handle event) {
   case EVNT_LED_HEARTBEAT:
     LED2_Neg();
     if(LED2_Get()){
-    	TRG_SetTrigger(TRG_HEART_BEAT, 100/TRG_TICKS_MS, APP_EventHandler, (TRG_CallBackDataPtr)EVNT_LED_HEARTBEAT);
+    	TRG_SetTrigger(TRG_HEART_BEAT, 100/TRG_TICKS_MS, EVNT_SetEvent, EVNT_LED_HEARTBEAT);
     }else{
-    	TRG_SetTrigger(TRG_HEART_BEAT, 900/TRG_TICKS_MS, APP_EventHandler, (TRG_CallBackDataPtr)EVNT_LED_HEARTBEAT);
+    	TRG_SetTrigger(TRG_HEART_BEAT, 900/TRG_TICKS_MS, EVNT_SetEvent, EVNT_LED_HEARTBEAT);
     }
     break;
 #if PL_CONFIG_NOF_KEYS>=1
   case EVNT_SW1_PRESSED:{
-	  if(!mot_on){
-		  MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT), 10);
-		  MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT), 10);
-		  mot_on = TRUE;
-	  }else{
-		  MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT), 0);
-		  MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT), 0);
-		  mot_on = FALSE;
-	  }
-	  //MOT_GetMotorHandle(MOT_MOTOR_LEFT)->DirPutVal(1);
-	  //MOT_GetMotorHandle(MOT_MOTOR_RIGHT)->DirPutVal(1);
-	  MOT_GetMotorHandle(MOT_MOTOR_LEFT)->SetRatio16(MOT_GetMotorHandle(MOT_MOTOR_LEFT)->currPWMvalue);
-	  MOT_GetMotorHandle(MOT_MOTOR_RIGHT)->SetRatio16(MOT_GetMotorHandle(MOT_MOTOR_RIGHT)->currPWMvalue);
 	  int i;
       for (i=0;i<2;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
-        WAIT1_Waitms(50);
+        //WAIT1_Waitms(50);
+        vTaskDelay(pdMS_TO_TICKS(50));
       }
-      //BUZ_PlayTune(BUZ_TUNE_MARIO);
+      //BUZ_PlayTune(BUZ_TUNE_BUTTON);
     BtnMsg(1, "pressed");
-    //CLS1_SendStr("Mario am Brennne\r\n", CLS1_GetStdio()->stdOut);
       break;
   }
   case EVNT_SW1_LPRESSED:{
 	  int i;
       for (i=0;i<2;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
-        WAIT1_Waitms(1000);
+        //WAIT1_Waitms(1000);
+        vTaskDelay(pdMS_TO_TICKS(1000));
       }
       BUZ_PlayTune(BUZ_TUNE_BUTTON_LONG);
     BtnMsg(1, "long_pressed");
@@ -141,33 +130,18 @@ void APP_EventHandler(EVNT_Handle event) {
 #endif
 #if PL_CONFIG_NOF_KEYS>=2
   case EVNT_SW2_PRESSED:{
-	  int i;
-      for (i=0;i<4;i++) {	// Hinzugefügt um led zu toggeln
-        LED1_Neg();
-        WAIT1_Waitms(50);
-      }
     BtnMsg(2, "pressed");
      break;
   }
 #endif
 #if PL_CONFIG_NOF_KEYS>=3
   case EVNT_SW3_PRESSED:{
-	  int i;
-      for (i=0;i<6;i++) {	// Hinzugefügt um led zu toggeln
-        LED1_Neg();
-        WAIT1_Waitms(50);
-      }
     BtnMsg(3, "pressed");
      break;
   }
 #endif
 #if PL_CONFIG_NOF_KEYS>=4
   case EVNT_SW4_PRESSED:{
-	  int i;
-      for (i=0;i<8;i++) {	// Hinzugefügt um led zu toggeln
-        LED1_Neg();
-        WAIT1_Waitms(50);
-      }
     BtnMsg(4, "pressed");
      break;
 
@@ -175,11 +149,6 @@ void APP_EventHandler(EVNT_Handle event) {
 #endif
 #if PL_CONFIG_NOF_KEYS>=5
   case EVNT_SW5_PRESSED:{
-	  int i;
-      for (i=0;i<10;i++) {	// Hinzugefügt um led zu toggeln
-        LED1_Neg();
-        WAIT1_Waitms(50);
-      }
     BtnMsg(5, "pressed");
      break;
 
@@ -187,11 +156,6 @@ void APP_EventHandler(EVNT_Handle event) {
 #endif
 #if PL_CONFIG_NOF_KEYS>=6
   case EVNT_SW6_PRESSED:{
-	  int i;
-      for (i=0;i<12;i++) {	// Hinzugefügt um led zu toggeln
-        LED1_Neg();
-        WAIT1_Waitms(50);
-      }
     BtnMsg(6, "pressed");
      break;
 
@@ -199,11 +163,6 @@ void APP_EventHandler(EVNT_Handle event) {
 #endif
 #if PL_CONFIG_NOF_KEYS>=7
   case EVNT_SW7_PRESSED:{
-	  int i;
-      for (i=0;i<14;i++) {	// Hinzugefügt um led zu toggeln
-        LED1_Neg();
-        WAIT1_Waitms(50);
-      }
     BtnMsg(7, "pressed");
      break;
 #if PL_CONFIG_HAS_TIMER
@@ -294,18 +253,19 @@ static void APP_AdoptToHardware(void) {
 #endif
 }
 
-void APP_Start(void) {
+void APP_Start(void* pvParameters) {
+	(void*)pvParameters;
   PL_Init();
   APP_AdoptToHardware();
   __asm volatile("cpsie i"); /* enable interrupts */
 
-  void (*APP_Handler_Event)(EVNT_Handle event) = APP_EventHandler; // erstellt funktionspointer und zeigt auf APP_EventHandler
   KEY_EnableInterrupts();
   EVNT_SetEvent(EVNT_STARTUP);		// Währent aufstarten wird ein Startup Event erzeugt
 
   for(;;) {
-	  EVNT_HandleEvent(APP_Handler_Event, TRUE);
+	  EVNT_HandleEvent(APP_EventHandler, TRUE);
 	  KEY_Scan();
+
 #if PL_CONFIG_HAS_RTOS
 	  vTaskDelay(pdMS_TO_TICKS(10));
 #endif

@@ -17,6 +17,6 @@
 void APP_EventHandler(EVNT_Handle event);
 #endif
 
-void APP_Start(void);
+void APP_Start(void* pvParameters);
 
 #endif /* SOURCES_FS2016_COMMON_APPLICATION_H_ */

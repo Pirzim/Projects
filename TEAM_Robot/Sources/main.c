@@ -137,7 +137,7 @@ int main(void)
 	}
 
 	xTaskHandle taskHndl1;
-	if(!FRTOS1_xTaskCreate(APP_Start, "Application", configMINIMAL_STACK_SIZE+800, (void*)NULL, tskIDLE_PRIORITY+2, &taskHndl1)){
+	if(!FRTOS1_xTaskCreate(APP_Start, "Application", configMINIMAL_STACK_SIZE+1000, (void*)NULL, tskIDLE_PRIORITY+2, &taskHndl1)){
 		for(;;);//error
 	}
 
