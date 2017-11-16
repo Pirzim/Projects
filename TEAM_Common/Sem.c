@@ -20,14 +20,30 @@
 #include "Sem.h"
 #include "LED.h"
 
-static xSemaphoreHandle sem = NULL;
+//static xSemaphoreHandle sem = NULL;
 
 static void vSlaveTask(void *pvParameters) {
-  /*! \todo Implement functionality */
+	xSemaphoreHandle sem = (xSemaphoreHandle)pvParameters;
+	for(;;){
+		if(xSemaphoreTake(sem, portMAX_DELAY)==pdTRUE){
+			LED1_Neg();
+		}
+	}
 }
 
 static void vMasterTask(void *pvParameters) {
-  /*! \todo send semaphore from master task to slave task */
+  xSemaphoreHandle sem = xSemaphoreCreateBinary();
+	xTaskHandle taskHnd2;
+	if(!FRTOS1_xTaskCreate(vSlaveTask, "Slave", configMINIMAL_STACK_SIZE+50, sem, tskIDLE_PRIORITY, &taskHnd2)){
+		for(;;);//error
+	}
+  if(sem==NULL){
+	  for(;;);	// something went wrong
+  }
+  for(;;){
+	  xSemaphoreGive(sem);
+	  vTaskDelay(pdMS_TO_TICKS(500));
+  }
 }
 
 void SEM_Deinit(void) {
@@ -35,5 +51,9 @@ void SEM_Deinit(void) {
 
 /*! \brief Initializes module */
 void SEM_Init(void) {
+	xTaskHandle taskHndl;
+	if(!FRTOS1_xTaskCreate(vMasterTask, "Master", configMINIMAL_STACK_SIZE+100, (void*)NULL, tskIDLE_PRIORITY, &taskHndl)){
+		for(;;);//error
+	}
 }
 #endif /* PL_CONFIG_HAS_SEMAPHORE */

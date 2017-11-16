@@ -103,7 +103,7 @@ int i;
 static void BlinkyTask(void * pvParameters){
 	(void*)pvParameters;
 	for(;;){
-		LED1_Neg();
+		//LED1_Neg();
 		vTaskDelay(pdMS_TO_TICKS(500));
 	}
 }
@@ -131,13 +131,13 @@ int main(void)
 
 #if PL_CONFIG_HAS_RTOS
 
-	xTaskHandle taskHndl;
-	if(!FRTOS1_xTaskCreate(BlinkyTask, "Blinki", configMINIMAL_STACK_SIZE+400, (void*)NULL, tskIDLE_PRIORITY+1, &taskHndl)){
+/*	xTaskHandle taskHndl;
+	if(!FRTOS1_xTaskCreate(BlinkyTask, "Blinki", configMINIMAL_STACK_SIZE+100, (void*)NULL, tskIDLE_PRIORITY+1, &taskHndl)){
 		for(;;);//error
-	}
+	}*/
 
 	xTaskHandle taskHndl1;
-	if(!FRTOS1_xTaskCreate(APP_Start, "Application", configMINIMAL_STACK_SIZE+1000, (void*)NULL, tskIDLE_PRIORITY+2, &taskHndl1)){
+	if(!FRTOS1_xTaskCreate(APP_Start, "Application", configMINIMAL_STACK_SIZE+800, (void*)NULL, tskIDLE_PRIORITY+2, &taskHndl1)){
 		for(;;);//error
 	}
 
