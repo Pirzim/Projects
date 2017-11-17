@@ -61,6 +61,7 @@ typedef struct SensorFctType_ {
 
 typedef uint16_t SensorTimeType;
 #define MAX_SENSOR_VALUE  ((SensorTimeType)-1)
+#define SENSOR_VALUE_2MS		(RefCnt_CNT_INP_FREQ_U_0*0.002)
 
 /* calibration min/max values */
 typedef struct SensorCalibT_ {
@@ -160,7 +161,7 @@ static void REF_MeasureRaw(SensorTimeType raw[REF_NOF_SENSORS]) {
     cnt = 0;
     for(i=0;i<REF_NOF_SENSORS;i++) {
       if (raw[i]==MAX_SENSOR_VALUE) { /* not measured yet? */
-        if (SensorFctArray[i].GetVal()==0) {
+        if (SensorFctArray[i].GetVal()==0||timerVal>=SENSOR_VALUE_2MS) {	//RefCnt_CNT_INP_FREQ_U_0*0.002 -> 2ms
           raw[i] = (uint16_t)timerVal;
         }
       } else { /* have value */

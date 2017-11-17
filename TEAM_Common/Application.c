@@ -1,5 +1,5 @@
 /**
- * \file
+r * \file
  * \brief Main application file
  * \author Erich Styger, erich.styger@hslu.ch
  *
@@ -114,7 +114,7 @@ void APP_EventHandler(EVNT_Handle event) {
         //WAIT1_Waitms(50);
         vTaskDelay(pdMS_TO_TICKS(50));
       }
-      //BUZ_PlayTune(BUZ_TUNE_BUTTON);
+      BUZ_PlayTune(BUZ_TUNE_BUTTON);
     BtnMsg(1, "pressed");
       break;
   }
@@ -127,6 +127,9 @@ void APP_EventHandler(EVNT_Handle event) {
       }
 #if PL_CONFIG_BOARD_IS_ROBO
       BUZ_PlayTune(BUZ_TUNE_BUTTON_LONG);
+#endif
+#if PL_CONFIG_HAS_REFLECTANCE
+      REF_CalibrateStartStop();
 #endif
     BtnMsg(1, "long_pressed");
      break;
