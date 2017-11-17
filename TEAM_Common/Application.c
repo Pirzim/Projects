@@ -97,12 +97,14 @@ void APP_EventHandler(EVNT_Handle event) {
     break;
   }
   case EVNT_LED_HEARTBEAT:
+#if PL_CONFIG_BOARD_IS_ROBO
     LED2_Neg();
     if(LED2_Get()){
     	TRG_SetTrigger(TRG_HEART_BEAT, 100/TRG_TICKS_MS, EVNT_SetEvent, EVNT_LED_HEARTBEAT);
     }else{
     	TRG_SetTrigger(TRG_HEART_BEAT, 900/TRG_TICKS_MS, EVNT_SetEvent, EVNT_LED_HEARTBEAT);
     }
+#endif
     break;
 #if PL_CONFIG_NOF_KEYS>=1
   case EVNT_SW1_PRESSED:{
@@ -123,7 +125,9 @@ void APP_EventHandler(EVNT_Handle event) {
         //WAIT1_Waitms(1000);
         vTaskDelay(pdMS_TO_TICKS(1000));
       }
+#if PL_CONFIG_BOARD_IS_ROBO
       BUZ_PlayTune(BUZ_TUNE_BUTTON_LONG);
+#endif
     BtnMsg(1, "long_pressed");
      break;
   }

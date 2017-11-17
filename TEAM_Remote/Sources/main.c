@@ -30,6 +30,7 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
+#include "FRTOS1.h"
 #include "MCUC1.h"
 #include "LEDPin1.h"
 #include "BitIoLdd17.h"
@@ -69,6 +70,7 @@
 #include "Tx1.h"
 #include "Rx1.h"
 #include "TmDt1.h"
+#include "SYS1.h"
 #include "TMOUT1.h"
 #include "HF1.h"
 #include "CS1.h"
@@ -91,7 +93,14 @@ int main(void)
   PE_low_level_init();
   /*** End of Processor Expert internal initialization.                    ***/
 
-  APP_Start();
+  //APP_Start();
+
+	xTaskHandle taskHndl1;
+	if(!FRTOS1_xTaskCreate(APP_Start, "Application", configMINIMAL_STACK_SIZE+300, (void*)NULL, tskIDLE_PRIORITY+2, &taskHndl1)){
+		for(;;);//error
+	}
+
+	vTaskStartScheduler();
 
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
   /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
