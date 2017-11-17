@@ -111,16 +111,62 @@
 /* User includes (#include below this line is not maintained by Processor Expert) */
 #include "Application.h"
 #include "LED.h"
+#if PL_CONFIG_HAS_MOTOR
+	#include "Motor.h"
+#endif
 
 void (*f)(void) = NULL;
 int i;
 
+typedef enum {
+	initDrive,
+	forward,
+	backward,
+	stop,
+	go,
+	left,
+	right
+} driveState;
 #if PL_CONFIG_HAS_RTOS
-static void BlinkyTask(void * pvParameters){
+static void DriveTask(void * pvParameters){
 	(void*)pvParameters;
+	driveState state = initDrive;
+	driveState lastState = initDrive+1;
+	int8_t speed = 15;
 	for(;;){
-		//LED1_Neg();
-		vTaskDelay(pdMS_TO_TICKS(500));
+		if(lastState != state){
+			switch(state){
+				case initDrive:
+					state = stop;
+					break;
+				case stop:
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),0);
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),0);
+					break;
+				case go:
+					break;
+				case forward:
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),speed);
+					break;
+				case backward:
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-speed);
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-speed);
+					break;
+				case left:
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),0);
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),speed);
+					break;
+				case right:
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),0);
+					break;
+				default: state = initDrive;
+					break;
+			}
+			lastState = state;
+		}
+		vTaskDelay(pdMS_TO_TICKS(20));
 	}
 }
 #endif
@@ -147,10 +193,10 @@ int main(void)
 
 #if PL_CONFIG_HAS_RTOS
 
-/*	xTaskHandle taskHndl;
-	if(!FRTOS1_xTaskCreate(BlinkyTask, "Blinki", configMINIMAL_STACK_SIZE+100, (void*)NULL, tskIDLE_PRIORITY+1, &taskHndl)){
+	xTaskHandle taskHndl;
+	if(!FRTOS1_xTaskCreate(DriveTask, "Drivi", configMINIMAL_STACK_SIZE+100, (void*)NULL, tskIDLE_PRIORITY+1, &taskHndl)){
 		for(;;);//error
-	}*/
+	}
 
 	xTaskHandle taskHndl1;
 	if(!FRTOS1_xTaskCreate(APP_Start, "Application", configMINIMAL_STACK_SIZE+800, (void*)NULL, tskIDLE_PRIORITY+2, &taskHndl1)){
