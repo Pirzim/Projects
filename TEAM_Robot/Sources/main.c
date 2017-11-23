@@ -114,6 +114,9 @@
 #if PL_CONFIG_HAS_MOTOR
 	#include "Motor.h"
 #endif
+#if PL_CONFIG_HAS_REFLECTANCE
+#include "reflectance.h"
+#endif
 
 void (*f)(void) = NULL;
 int i;
@@ -128,12 +131,91 @@ typedef enum {
 	right
 } driveState;
 #if PL_CONFIG_HAS_RTOS
+
+bool driving_ON = 0;
+
+void buttonPressed(){
+	driving_ON = !driving_ON;
+}
+void doDriving(int8_t param){
+	int8_t speed = param;
+	int8_t newspeed;
+	static uint16_t counter;
+	REF_LineKind lineKind;
+	if(REF_IsReady()&&driving_ON){
+		lineKind = REF_GetLineKind();
+			switch(lineKind){
+			case REF_LINE_NONE:
+				newspeed = -speed;
+				if(counter <=1000){
+					counter++;
+				}else{
+					counter = 0;
+					driving_ON = 0;
+					newspeed = 0;
+				}
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),newspeed);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),newspeed);
+			break;
+			case REF_LINE_FULL:
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),speed);
+			break;
+			case REF_LINE_LEFT:
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-speed);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),speed);
+			break;
+			case REF_LINE_RIGHT:
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-speed);
+			break;
+			case REF_LINE_STRAIGHT:
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),speed);
+			break;
+			default:
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),0);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),0);
+			break;
+		}
+	}else{
+		MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),0);
+		MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),0);
+	}
+}
 static void DriveTask(void * pvParameters){
 	(void*)pvParameters;
 	driveState state = initDrive;
 	driveState lastState = initDrive+1;
-	int8_t speed = 15;
+	int8_t speed = 30;
+	REF_LineKind lineKind;
 	for(;;){
+#if 1
+		doDriving(speed);
+
+
+
+
+
+#else
+		if(REF_IsReady()){
+			lineKind = REF_GetLineKind();
+				switch(lineKind){
+				case REF_LINE_NONE: state = left;
+				break;
+				case REF_LINE_FULL: state = forward;
+				break;
+				case REF_LINE_LEFT: state = left;
+				break;
+				case REF_LINE_RIGHT: state = right;
+				break;
+				case REF_LINE_STRAIGHT: state = go;
+				break;
+				default: state = stop;
+			}
+		}else{
+			state = stop;
+		}
 		if(lastState != state){
 			switch(state){
 				case initDrive:
@@ -154,19 +236,20 @@ static void DriveTask(void * pvParameters){
 					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-speed);
 					break;
 				case left:
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),0);
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-speed);
 					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),speed);
 					break;
 				case right:
 					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),0);
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-speed);
 					break;
 				default: state = initDrive;
 					break;
 			}
 			lastState = state;
 		}
-		vTaskDelay(pdMS_TO_TICKS(20));
+#endif
+		vTaskDelay(pdMS_TO_TICKS(5));
 	}
 }
 #endif
@@ -194,7 +277,7 @@ int main(void)
 #if PL_CONFIG_HAS_RTOS
 
 	xTaskHandle taskHndl;
-	if(!FRTOS1_xTaskCreate(DriveTask, "Drivi", configMINIMAL_STACK_SIZE+100, (void*)NULL, tskIDLE_PRIORITY+1, &taskHndl)){
+	if(!FRTOS1_xTaskCreate(DriveTask, "Drivi", configMINIMAL_STACK_SIZE+100, (void*)NULL, tskIDLE_PRIORITY, &taskHndl)){
 		for(;;);//error
 	}
 

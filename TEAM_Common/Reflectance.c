@@ -151,7 +151,7 @@ static void REF_MeasureRaw(SensorTimeType raw[REF_NOF_SENSORS]) {
     SensorFctArray[i].SetVal(); /* put high */
     raw[i] = MAX_SENSOR_VALUE;
   }
-  WAIT1_Waitus(50); /* give at least 10 us to charge the capacitor */
+  WAIT1_Waitus(20); /* give at least 10 us to charge the capacitor */
   for(i=0;i<REF_NOF_SENSORS;i++) {
     SensorFctArray[i].SetInput(); /* turn I/O line as input */
   }
@@ -577,7 +577,7 @@ static void ReflTask (void *pvParameters) {
   (void)pvParameters; /* not used */
   for(;;) {
     REF_StateMachine();
-    FRTOS1_vTaskDelay(10/portTICK_PERIOD_MS);
+    FRTOS1_vTaskDelay(5/portTICK_PERIOD_MS);
   }
 }
 
@@ -597,7 +597,7 @@ void REF_Init(void) {
   refState = REF_STATE_INIT;
   timerHandle = RefCnt_Init(NULL);
   /*! \todo You might need to adjust priority or other task settings */
-  if (xTaskCreate(ReflTask, "Refl", 600/sizeof(StackType_t), NULL, tskIDLE_PRIORITY, NULL) != pdPASS) {
+  if (xTaskCreate(ReflTask, "Refl", 700/sizeof(StackType_t), NULL, tskIDLE_PRIORITY, NULL) != pdPASS) {
     for(;;){} /* error */
   }
 }
