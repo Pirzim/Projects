@@ -132,42 +132,66 @@ typedef enum {
 } driveState;
 #if PL_CONFIG_HAS_RTOS
 
-bool driving_ON = 0;
 
-void buttonPressed(){
-	driving_ON = !driving_ON;
-}
+
+extern xSemaphoreHandle buttonHandle;
 void doDriving(int8_t param){
+	int32_t lastPosL = (int32_t)Q4CLeft_GetPos();
+	int32_t lastPosR = (int32_t)Q4CRight_GetPos();
+	static bool driving_ON = 0;
 	int8_t speed = param;
 	int8_t newspeed;
+	static bool toggle;
 	static uint16_t counter;
 	REF_LineKind lineKind;
+	if(xSemaphoreTake(buttonHandle, 0)==pdTRUE){
+		driving_ON = !driving_ON;
+	}
 	if(REF_IsReady()&&driving_ON){
 		lineKind = REF_GetLineKind();
 			switch(lineKind){
 			case REF_LINE_NONE:
-				newspeed = -speed;
-				if(counter <=1000){
-					counter++;
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-100);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-100);
+				while((int32_t)Q4CRight_GetPos()-lastPosR>-800) vTaskDelay(pdMS_TO_TICKS(5));
+				lastPosL = (int32_t)Q4CLeft_GetPos();
+				lastPosR = (int32_t)Q4CRight_GetPos();
+				if(toggle){
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-100);
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),100);
+					while((int32_t)Q4CLeft_GetPos()-lastPosL>-800) vTaskDelay(pdMS_TO_TICKS(5));
+					toggle = !toggle;
 				}else{
-					counter = 0;
-					driving_ON = 0;
-					newspeed = 0;
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),100);
+					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-100);
+					while((int32_t)Q4CRight_GetPos()-lastPosR>-800) vTaskDelay(pdMS_TO_TICKS(5));
+					toggle = !toggle;
 				}
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),newspeed);
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),newspeed);
+
 			break;
 			case REF_LINE_FULL:
 				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
 				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),speed);
 			break;
 			case REF_LINE_LEFT:
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-speed);
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),speed);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-100);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-100);
+				while((int32_t)Q4CRight_GetPos()-lastPosR>-300) vTaskDelay(pdMS_TO_TICKS(5));
+				lastPosL = (int32_t)Q4CLeft_GetPos();
+				lastPosR = (int32_t)Q4CRight_GetPos();
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-100);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),100);
+				while((int32_t)Q4CLeft_GetPos()-lastPosL>-1000) vTaskDelay(pdMS_TO_TICKS(5));
 			break;
 			case REF_LINE_RIGHT:
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-speed);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-100);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-100);
+				while((int32_t)Q4CRight_GetPos()-lastPosR>-300) vTaskDelay(pdMS_TO_TICKS(5));
+				lastPosL = (int32_t)Q4CLeft_GetPos();
+				lastPosR = (int32_t)Q4CRight_GetPos();
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),100);
+				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-100);
+				while((int32_t)Q4CRight_GetPos()-lastPosR>-1000) vTaskDelay(pdMS_TO_TICKS(5));
 			break;
 			case REF_LINE_STRAIGHT:
 				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
@@ -185,71 +209,18 @@ void doDriving(int8_t param){
 }
 static void DriveTask(void * pvParameters){
 	(void*)pvParameters;
-	driveState state = initDrive;
-	driveState lastState = initDrive+1;
-	int8_t speed = 30;
-	REF_LineKind lineKind;
+	int8_t speed = 90;
+	MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),10);
+	MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),10);
 	for(;;){
-#if 1
 		doDriving(speed);
-
-
-
-
-
-#else
-		if(REF_IsReady()){
-			lineKind = REF_GetLineKind();
-				switch(lineKind){
-				case REF_LINE_NONE: state = left;
-				break;
-				case REF_LINE_FULL: state = forward;
-				break;
-				case REF_LINE_LEFT: state = left;
-				break;
-				case REF_LINE_RIGHT: state = right;
-				break;
-				case REF_LINE_STRAIGHT: state = go;
-				break;
-				default: state = stop;
-			}
-		}else{
-			state = stop;
+/*		if((int32_t)Q4CLeft_GetPos() >= 1000){
+			MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),0);
 		}
-		if(lastState != state){
-			switch(state){
-				case initDrive:
-					state = stop;
-					break;
-				case stop:
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),0);
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),0);
-					break;
-				case go:
-					break;
-				case forward:
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),speed);
-					break;
-				case backward:
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-speed);
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-speed);
-					break;
-				case left:
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-speed);
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),speed);
-					break;
-				case right:
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-speed);
-					break;
-				default: state = initDrive;
-					break;
-			}
-			lastState = state;
-		}
-#endif
-		vTaskDelay(pdMS_TO_TICKS(5));
+		if((int32_t)Q4CRight_GetPos() >= 1000){
+			MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),0);
+		}*/
+		vTaskDelay(pdMS_TO_TICKS(3));
 	}
 }
 #endif
