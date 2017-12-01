@@ -24,6 +24,7 @@ typedef enum {
   TRG_KEYPRESS, /*!< key debounce */
   TRG_BUZ_TUNE, /*!< buzzer tune */
   TRG_HEART_BEAT,
+  TRG_5S,
   TRG_NOF_TRIGGERS /*!< Must be last! */
 } TRG_TriggerKind;
 

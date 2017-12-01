@@ -53,6 +53,11 @@ extern "C" {
 
 #include "Keys.h"
 #include "timer.h"
+#if PL_CONFIG_HAS_MOTOR_TACHO
+#include "tacho.h"
+#endif
+
+uint16_t i = 0;
 
 void Cpu_OnNMIINT(void)
 {
@@ -139,6 +144,8 @@ void FRTOS1_vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
 */
 void FRTOS1_vApplicationTickHook(void)
 {
+	TACHO_Sample();
+
   /* Called for every RTOS tick. */
   /* Write your code here ... */
 }

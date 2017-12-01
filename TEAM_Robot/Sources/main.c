@@ -110,120 +110,8 @@
 #include "IO_Map.h"
 /* User includes (#include below this line is not maintained by Processor Expert) */
 #include "Application.h"
-#include "LED.h"
-#if PL_CONFIG_HAS_MOTOR
-	#include "Motor.h"
-#endif
-#if PL_CONFIG_HAS_REFLECTANCE
-#include "reflectance.h"
-#endif
-
-void (*f)(void) = NULL;
-int i;
-
-typedef enum {
-	initDrive,
-	forward,
-	backward,
-	stop,
-	go,
-	left,
-	right
-} driveState;
-#if PL_CONFIG_HAS_RTOS
 
 
-
-extern xSemaphoreHandle buttonHandle;
-void doDriving(int8_t param){
-	int32_t lastPosL = (int32_t)Q4CLeft_GetPos();
-	int32_t lastPosR = (int32_t)Q4CRight_GetPos();
-	static bool driving_ON = 0;
-	int8_t speed = param;
-	int8_t newspeed;
-	static bool toggle;
-	static uint16_t counter;
-	REF_LineKind lineKind;
-	if(xSemaphoreTake(buttonHandle, 0)==pdTRUE){
-		driving_ON = !driving_ON;
-	}
-	if(REF_IsReady()&&driving_ON){
-		lineKind = REF_GetLineKind();
-			switch(lineKind){
-			case REF_LINE_NONE:
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-100);
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-100);
-				while((int32_t)Q4CRight_GetPos()-lastPosR>-800) vTaskDelay(pdMS_TO_TICKS(5));
-				lastPosL = (int32_t)Q4CLeft_GetPos();
-				lastPosR = (int32_t)Q4CRight_GetPos();
-				if(toggle){
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-100);
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),100);
-					while((int32_t)Q4CLeft_GetPos()-lastPosL>-800) vTaskDelay(pdMS_TO_TICKS(5));
-					toggle = !toggle;
-				}else{
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),100);
-					MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-100);
-					while((int32_t)Q4CRight_GetPos()-lastPosR>-800) vTaskDelay(pdMS_TO_TICKS(5));
-					toggle = !toggle;
-				}
-
-			break;
-			case REF_LINE_FULL:
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),speed);
-			break;
-			case REF_LINE_LEFT:
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-100);
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-100);
-				while((int32_t)Q4CRight_GetPos()-lastPosR>-300) vTaskDelay(pdMS_TO_TICKS(5));
-				lastPosL = (int32_t)Q4CLeft_GetPos();
-				lastPosR = (int32_t)Q4CRight_GetPos();
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-100);
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),100);
-				while((int32_t)Q4CLeft_GetPos()-lastPosL>-1000) vTaskDelay(pdMS_TO_TICKS(5));
-			break;
-			case REF_LINE_RIGHT:
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),-100);
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-100);
-				while((int32_t)Q4CRight_GetPos()-lastPosR>-300) vTaskDelay(pdMS_TO_TICKS(5));
-				lastPosL = (int32_t)Q4CLeft_GetPos();
-				lastPosR = (int32_t)Q4CRight_GetPos();
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),100);
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),-100);
-				while((int32_t)Q4CRight_GetPos()-lastPosR>-1000) vTaskDelay(pdMS_TO_TICKS(5));
-			break;
-			case REF_LINE_STRAIGHT:
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),speed);
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),speed);
-			break;
-			default:
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),0);
-				MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),0);
-			break;
-		}
-	}else{
-		MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),0);
-		MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),0);
-	}
-}
-static void DriveTask(void * pvParameters){
-	(void*)pvParameters;
-	int8_t speed = 90;
-	MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),10);
-	MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),10);
-	for(;;){
-		doDriving(speed);
-/*		if((int32_t)Q4CLeft_GetPos() >= 1000){
-			MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_LEFT),0);
-		}
-		if((int32_t)Q4CRight_GetPos() >= 1000){
-			MOT_SetSpeedPercent(MOT_GetMotorHandle(MOT_MOTOR_RIGHT),0);
-		}*/
-		vTaskDelay(pdMS_TO_TICKS(3));
-	}
-}
-#endif
 /*lint -save  -e970 Disable MISRA rule (6.3) checking. */
 int main(void)
 /*lint -restore Enable MISRA rule (6.3) checking. */
@@ -246,11 +134,6 @@ int main(void)
 #endif
 
 #if PL_CONFIG_HAS_RTOS
-
-	xTaskHandle taskHndl;
-	if(!FRTOS1_xTaskCreate(DriveTask, "Drivi", configMINIMAL_STACK_SIZE+100, (void*)NULL, tskIDLE_PRIORITY, &taskHndl)){
-		for(;;);//error
-	}
 
 	xTaskHandle taskHndl1;
 	if(!FRTOS1_xTaskCreate(APP_Start, "Application", configMINIMAL_STACK_SIZE+800, (void*)NULL, tskIDLE_PRIORITY+2, &taskHndl1)){

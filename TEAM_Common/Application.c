@@ -56,8 +56,11 @@ r * \file
 #if PL_CONFIG_HAS_TRIGGER
 	#include "Trigger.h"
 #endif
+#if PL_CONFIG_HAS_EVENTS
+#include "event.h"
+#endif
 
-xSemaphoreHandle buttonHandle;
+xSemaphoreHandle buttonHandle, time_5s_handle, OFF_Handle;
 
 #if PL_CONFIG_HAS_EVENTS
 
@@ -84,50 +87,47 @@ static void BtnMsg(int btn, const char *msg) {
 
 void APP_EventHandler(EVNT_Handle event) {
 	//static bool mot_on;
+	int i;
   switch(event) {
   case EVNT_STARTUP:
-  {
-      int i;
       for (i=0;i<15;i++) {
         LED1_Neg();
-        //WAIT1_Waitms(50);
         vTaskDelay(pdMS_TO_TICKS(50));
       }
       LED1_Off();
       //BUZ_PlayTune(BUZ_TUNE_WELCOME);
       EVNT_SetEvent(EVNT_LED_HEARTBEAT);
     break;
-  }
+  case EVNT_5s_done:
+	  FRTOS1_xSemaphoreGive(time_5s_handle);
+	  break;
   case EVNT_LED_HEARTBEAT:
 #if PL_CONFIG_BOARD_IS_ROBO
     LED2_Neg();
     if(LED2_Get()){
-    	TRG_SetTrigger(TRG_HEART_BEAT, 100/TRG_TICKS_MS, EVNT_SetEvent, EVNT_LED_HEARTBEAT);
+    	TRG_SetTrigger(TRG_HEART_BEAT, 100/TRG_TICKS_MS, (TRG_Callback)EVNT_SetEvent, (TRG_CallBackDataPtr)EVNT_LED_HEARTBEAT);
     }else{
-    	TRG_SetTrigger(TRG_HEART_BEAT, 900/TRG_TICKS_MS, EVNT_SetEvent, EVNT_LED_HEARTBEAT);
+    	TRG_SetTrigger(TRG_HEART_BEAT, 900/TRG_TICKS_MS, (TRG_Callback)EVNT_SetEvent, (TRG_CallBackDataPtr)EVNT_LED_HEARTBEAT);
     }
 #endif
     break;
 #if PL_CONFIG_NOF_KEYS>=1
-  case EVNT_SW1_PRESSED:{
+  case EVNT_SW1_PRESSED:
 	  if(REF_IsReady()){
 		  FRTOS1_xSemaphoreGive(buttonHandle);
 	  }
-	  int i;
       for (i=0;i<2;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
-        //WAIT1_Waitms(50);
         vTaskDelay(pdMS_TO_TICKS(50));
       }
       BUZ_PlayTune(BUZ_TUNE_BUTTON);
     BtnMsg(1, "pressed");
       break;
-  }
   case EVNT_SW1_LPRESSED:{
+	  FRTOS1_xSemaphoreGive(OFF_Handle);
 	  int i;
       for (i=0;i<2;i++) {	// Hinzugefügt um led zu toggeln
         LED1_Neg();
-        //WAIT1_Waitms(1000);
         vTaskDelay(pdMS_TO_TICKS(1000));
       }
 #if PL_CONFIG_BOARD_IS_ROBO
@@ -207,7 +207,6 @@ static const KIN1_UID RoboIDs[] = {
 static void APP_AdoptToHardware(void) {
   KIN1_UID id;
   uint8_t res;
-  uint8_t i;
 
   res = KIN1_UIDGet(&id);
   if (res!=ERR_OK) {
@@ -291,8 +290,16 @@ void APP_Start(void* pvParameters) {
   KEY_EnableInterrupts();
   EVNT_SetEvent(EVNT_STARTUP);		// Währent aufstarten wird ein Startup Event erzeugt
 
+  	  OFF_Handle = xSemaphoreCreateBinary();
+  	  if(OFF_Handle == NULL){
+  		  for(;;);
+  	  }
 	buttonHandle = xSemaphoreCreateBinary();
 	if(buttonHandle == NULL){
+		for(;;);
+	}
+	time_5s_handle = xSemaphoreCreateBinary();
+	if(time_5s_handle == NULL){
 		for(;;);
 	}
   for(;;) {

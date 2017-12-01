@@ -20,6 +20,7 @@ typedef enum EVNT_Handle {
   EVNT_LED_HEARTBEAT,     /*!< LED heartbeat */
 #if PL_CONFIG_HAS_TIMER
   EVNT_TMR_1S,
+  EVNT_5s_done,
 #endif
 #if PL_CONFIG_HAS_KEYS
   #if PL_CONFIG_NOF_KEYS>=1
