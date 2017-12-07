@@ -33,6 +33,19 @@
 #if PL_CONFIG_HAS_DRIVE
 #include "drive.h"
 #endif
+#if PL_CONFIG_HAS_LINE_FOLLOW
+#include "LineFollow.h"
+#endif
+#if PL_CONFIG_HAS_TURN
+#include "Turn.h"
+#endif
+#if PL_HAS_DISTANCE_SENSOR
+#include "Distance.h"
+#endif
+#if PL_CONFIG_HAS_QUADRATURE
+#include "Q4CLeft.h"
+#include "Q4CRight.h"
+#endif
 #if PL_CONFIG_HAS_RTOS
 /*! \brief Initializes the RTOS module */
 void RTOS_Init(void);
@@ -40,7 +53,8 @@ void RTOS_Init(void);
 /*! \brief De-Initializes the RTOS module */
 void RTOS_Deinit(void);
 
-void doDriving(int32_t* speedR, int32_t* speedL);
+void doDriving(void);
+static void delayOver(void* param);
 
 typedef enum {
 	stop,
@@ -50,9 +64,19 @@ typedef enum {
 	go,
 	left,
 	right,
-	normalDrive,
-	ready
+	ready,
+	Linefolowing,
+	SUMO,
+	backwardRight,
+	backwardLeft,
+	waitForTurn
 } driveState;
+
+typedef enum{
+	turnLeft,
+	turnRight,
+	turnBack
+}turn_t;
 
 #endif /* PL_CONFIG_HAS_RTOS */
 

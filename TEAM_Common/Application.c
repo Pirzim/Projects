@@ -60,7 +60,7 @@ r * \file
 #include "event.h"
 #endif
 
-xSemaphoreHandle buttonHandle, time_5s_handle, OFF_Handle;
+xSemaphoreHandle buttonHandle, OFF_Handle;
 
 #if PL_CONFIG_HAS_EVENTS
 
@@ -98,9 +98,6 @@ void APP_EventHandler(EVNT_Handle event) {
       //BUZ_PlayTune(BUZ_TUNE_WELCOME);
       EVNT_SetEvent(EVNT_LED_HEARTBEAT);
     break;
-  case EVNT_5s_done:
-	  FRTOS1_xSemaphoreGive(time_5s_handle);
-	  break;
   case EVNT_LED_HEARTBEAT:
 #if PL_CONFIG_BOARD_IS_ROBO
     LED2_Neg();
@@ -263,7 +260,7 @@ static void APP_AdoptToHardware(void) {
 	MOT_Invert(MOT_GetMotorHandle(MOT_MOTOR_LEFT), TRUE); /* invert left motor */
 	MOT_Invert(MOT_GetMotorHandle(MOT_MOTOR_RIGHT), TRUE); /* invert right motor */
 #if PL_CONFIG_HAS_QUADRATURE
-	(void)Q4CLeft_SwapPins(TRUE);
+	(void)Q4CLeft_SwapPins(FALSE);
 	(void)Q4CRight_SwapPins(TRUE);
 #endif
   }
@@ -296,10 +293,6 @@ void APP_Start(void* pvParameters) {
   	  }
 	buttonHandle = xSemaphoreCreateBinary();
 	if(buttonHandle == NULL){
-		for(;;);
-	}
-	time_5s_handle = xSemaphoreCreateBinary();
-	if(time_5s_handle == NULL){
 		for(;;);
 	}
   for(;;) {

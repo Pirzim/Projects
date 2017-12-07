@@ -80,6 +80,14 @@ bool DRV_IsStopped(void) {
   }
 }
 
+bool DRV_isSomethingPending(void){
+	  if (FRTOS1_uxQueueMessagesWaiting(DRV_Queue)>0) {
+	    return TRUE; /* still messages in command queue, so there is something pending */
+	  }else{
+		  return FALSE;
+	  }
+}
+
 uint8_t DRV_Stop(int32_t timeoutMs) {
   DRV_SetMode(DRV_MODE_STOP); /* stop it */
   do {
@@ -105,6 +113,8 @@ static bool match(int32_t pos, int32_t target) {
   #define MATCH_MARGIN  10
   return (pos>=target-MATCH_MARGIN && pos<=target+MATCH_MARGIN);
 }
+
+
 
 bool DRV_HasTurned(void) {
   int32_t pos;
@@ -351,7 +361,7 @@ static void DriveTask(void *pvParameters) {
     } else if (DRV_Status.mode==DRV_MODE_NONE) {
       /* do nothing */
     }
-    FRTOS1_vTaskDelayUntil(&xLastWakeTime, 15/portTICK_PERIOD_MS);
+    FRTOS1_vTaskDelayUntil(&xLastWakeTime, 10/portTICK_PERIOD_MS);
   } /* for */
 }
 

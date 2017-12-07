@@ -9,25 +9,37 @@
 #include "RTOS.h"
 #include "FRTOS1.h"
 
+#define LINEFOLOWING 0				// change for Sumo: 0, Linefollowing: 1
 
 extern xSemaphoreHandle buttonHandle, time_5s_handle, OFF_Handle;
+static driveState state;
+static turn_t turn;
 
-void doDriving(int32_t* speedR, int32_t* speedL){
-	static bool driving_ON = 0;
-	static driveState state;
+static void delayOver(void* param){
+	(void)param;
+	if(state == initDrive){
+		state = ready;
+	}
+}
+
+void doDriving(void){
+	static bool driving_ON;
+	static uint16_t timeout;
+	int testvar;
 	REF_LineKind lineKind;
 	bool firstTimeON = FALSE;
-
 	bool driving_ON_past = driving_ON;
-	if(xSemaphoreTake(buttonHandle, 0)==pdTRUE){
+	static bool turned;
+
+	if(xSemaphoreTake(buttonHandle, 0)==pdTRUE){	// ein/ ausschalten befehl erhalten
 		driving_ON = !driving_ON;
 	}
-	if(!driving_ON){
+	if(!driving_ON){	// ausschalten
 		state = stop;
-	}else if(driving_ON_past){
+	}else if(!driving_ON_past){		// wenn erstes mal eingeschaltet
 		state = initDrive;
 		firstTimeON = TRUE;
-	}else{
+	}else{							//wen eingeschaltet
 		lineKind = REF_GetLineKind();
 	}
 
@@ -38,18 +50,91 @@ void doDriving(int32_t* speedR, int32_t* speedL){
 	switch(state){
 	case initDrive:
 			if(firstTimeON){
-				TRG_SetTrigger(TRG_5S, 5000/TRG_TICKS_MS, (TRG_Callback)EVNT_SetEvent, (TRG_CallBackDataPtr)EVNT_5s_done);
+				TRG_SetTrigger(TRG_5S, 5000/TRG_TICKS_MS, (TRG_Callback)delayOver, NULL);
 			}
 			BUZ_Beep(300,10);
-			if(xSemaphoreTake(time_5s_handle, 0)==pdTRUE){
-				state = ready;
-			}
 		break;
 	case stop:
-		*speedR = 0;
-		*speedL = 0;
+		driving_ON = FALSE;
+		DRV_SetMode(DRV_MODE_STOP);
 		break;
-	case normalDrive:
+	case ready:
+#if LINEFOLOWING
+		state = Linefolowing;
+#else
+		state = SUMO;
+#endif
+		break;
+	case Linefolowing:
+		LF_StartFollowing();
+		if(lineKind == REF_LINE_FULL){
+			LF_StopFollowing();
+			TURN_Turn(TURN_RIGHT180, 0);
+			LF_StartFollowing();
+			turned = TRUE;
+		}
+		if(turned && lineKind==REF_LINE_NONE){
+			LF_StopFollowing();
+			BUZ_PlayTune(BUZ_TUNE_MARIO);
+			state = stop;
+			turned = FALSE;
+		}
+		break;
+	case SUMO:
+		if(lineKind==REF_LINE_NONE){
+			state = backward;
+			turn = turnBack;
+			timeout++;
+		}else if(lineKind==REF_LINE_RIGHT){
+			state = backward;
+			turn = turnRight;
+			timeout = 0;
+		}else if(lineKind==REF_LINE_LEFT){
+			state = backward;
+			turn = turnLeft;
+			timeout = 0;
+		}else{
+			if(DIST_NearFrontObstacle(200)){		// front obstracle
+				DRV_SetMode(DRV_MODE_SPEED);
+				DRV_SetSpeed(8000,8000);
+			}else if(DIST_NearRearObstacle(200)){	// rear obstracle
+				TURN_Turn(TURN_LEFT180, 0);
+				DRV_SetMode(DRV_MODE_SPEED);
+				DRV_SetSpeed(-8000,-8000);
+			}else if(DIST_NearRightObstacle(200)){	// right obstracle
+				DRV_SetMode(DRV_MODE_SPEED);
+				TURN_Turn(TURN_RIGHT90, 0);
+			}else if(DIST_NearLeftObstacle(200)){	//left obstracle
+				DRV_SetMode(DRV_MODE_SPEED);
+				TURN_Turn(TURN_LEFT90, 0);
+			}else{
+				DRV_SetMode(DRV_MODE_SPEED);
+				DRV_SetSpeed(4000,4000);					// nothing detected
+			}
+			timeout = 0;
+		}
+		if(timeout >= 1000){
+			state = stop;
+		}
+
+		break;
+	case backward:
+		Q4CLeft_SetPos(0);
+		Q4CRight_SetPos(0);
+		state = waitForTurn;
+		TURN_MoveToPos(-1000,-1000, TRUE,NULL,100);
+		switch(turn){
+		case turnLeft:
+			TURN_TurnAngle(-80, 0);		// TURN left
+			break;
+		case turnRight:
+			TURN_TurnAngle(80, 0);		// TURN right
+			break;
+		case turnBack:
+			TURN_TurnAngle(120,0);
+			break;
+		}
+		state = SUMO;
 		break;
 
 	}
@@ -130,14 +215,8 @@ void doDriving(int32_t* speedR, int32_t* speedL){
 
 static void SUMO_Drive(void * pvParameters){
 	(void*)pvParameters;
-	int32_t setSpeedR, setSpeedL;
-
-	setSpeedL = 1000;
-	setSpeedR = 1000;
-	DRV_SetSpeed(setSpeedL, setSpeedR);
 	for(;;){
-		//doDriving(&setSpeedR, &setSpeedL);
-
+		doDriving();
 		vTaskDelay(pdMS_TO_TICKS(10));
 	}
 }

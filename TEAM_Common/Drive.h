@@ -39,6 +39,7 @@ uint8_t DRV_SetMode(DRV_Mode mode);
 DRV_Mode DRV_GetMode(void);
 bool DRV_IsStopped(void);
 bool DRV_HasTurned(void);
+bool DRV_isSomethingPending(void);
 
 /*!
  * \brief Stops the engines
