@@ -9,7 +9,7 @@
 #include "RTOS.h"
 #include "FRTOS1.h"
 
-#define LINEFOLOWING 0				// change for Sumo: 0, Linefollowing: 1
+#define LINEFOLOWING 1				// change for Sumo: 0, Linefollowing: 1
 
 extern xSemaphoreHandle buttonHandle, time_5s_handle, OFF_Handle;
 static driveState state;
@@ -33,9 +33,14 @@ void doDriving(void){
 
 	if(xSemaphoreTake(buttonHandle, 0)==pdTRUE){	// ein/ ausschalten befehl erhalten
 		driving_ON = !driving_ON;
+
 	}
 	if(!driving_ON){	// ausschalten
 		state = stop;
+#if LINEFOLOWING
+		LF_StopFollowing();
+#endif
+
 	}else if(!driving_ON_past){		// wenn erstes mal eingeschaltet
 		state = initDrive;
 		firstTimeON = TRUE;
@@ -45,6 +50,7 @@ void doDriving(void){
 
 	if(xSemaphoreTake(OFF_Handle,0)==pdTRUE){
 		state = stop;
+
 	}
 
 	switch(state){
@@ -69,13 +75,13 @@ void doDriving(void){
 		LF_StartFollowing();
 		if(lineKind == REF_LINE_FULL){
 			LF_StopFollowing();
-			TURN_Turn(TURN_RIGHT180, 0);
+			TURN_Turn(TURN_LEFT180, 0);
 			LF_StartFollowing();
 			turned = TRUE;
 		}
 		if(turned && lineKind==REF_LINE_NONE){
 			LF_StopFollowing();
-			BUZ_PlayTune(BUZ_TUNE_MARIO);
+			BUZ_PlayTune(BUZ_TUNE_AENTLISONG);
 			state = stop;
 			turned = FALSE;
 		}
@@ -94,17 +100,17 @@ void doDriving(void){
 			turn = turnLeft;
 			timeout = 0;
 		}else{
-			if(DIST_NearFrontObstacle(200)){		// front obstracle
+			if(DIST_NearFrontObstacle(400)){		// front obstracle
 				DRV_SetMode(DRV_MODE_SPEED);
 				DRV_SetSpeed(8000,8000);
-			}else if(DIST_NearRearObstacle(200)){	// rear obstracle
+			}else if(DIST_NearRearObstacle(400)){	// rear obstracle
 				TURN_Turn(TURN_LEFT180, 0);
 				DRV_SetMode(DRV_MODE_SPEED);
-				DRV_SetSpeed(-8000,-8000);
-			}else if(DIST_NearRightObstacle(200)){	// right obstracle
+				DRV_SetSpeed(8000,8000);
+			}else if(DIST_NearRightObstacle(400)){	// right obstracle
 				DRV_SetMode(DRV_MODE_SPEED);
 				TURN_Turn(TURN_RIGHT90, 0);
-			}else if(DIST_NearLeftObstacle(200)){	//left obstracle
+			}else if(DIST_NearLeftObstacle(400)){	//left obstracle
 				DRV_SetMode(DRV_MODE_SPEED);
 				TURN_Turn(TURN_LEFT90, 0);
 			}else{

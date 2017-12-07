@@ -20,7 +20,7 @@
 #define VL6180X_SCALING_FACTOR_1      1 /* 0-20 cm */
 #define VL6180X_SCALING_FACTOR_2      2 /* 0-40 cm */
 #define VL6180X_SCALING_FACTOR_3      3 /* 0-60 cm */
-#define VL6180X_SCALING_DEFAULT       VL6180X_SCALING_FACTOR_1
+#define VL6180X_SCALING_DEFAULT       VL6180X_SCALING_FACTOR_2
 
 #define VL6180X_DEFAULT_I2C_ADDRESS 0x29 /* default address 0101001b (shifted on the bus it is 0101001x */
 
