@@ -30,6 +30,7 @@ void doDriving(void){
 	bool firstTimeON = FALSE;
 	bool driving_ON_past = driving_ON;
 	static bool turned;
+	bool kurve;
 
 	if(xSemaphoreTake(buttonHandle, 0)==pdTRUE){	// ein/ ausschalten befehl erhalten
 		driving_ON = !driving_ON;
@@ -56,7 +57,7 @@ void doDriving(void){
 	switch(state){
 	case initDrive:
 			if(firstTimeON){
-				TRG_SetTrigger(TRG_5S, 5000/TRG_TICKS_MS, (TRG_Callback)delayOver, NULL);
+				TRG_SetTrigger(TRG_5S, 50/TRG_TICKS_MS, (TRG_Callback)delayOver, NULL);
 			}
 			BUZ_Beep(300,10);
 		break;
@@ -73,13 +74,22 @@ void doDriving(void){
 		break;
 	case Linefolowing:
 		LF_StartFollowing();
-		if(lineKind == REF_LINE_FULL){
+		if((turned == FALSE) && (lineKind == REF_LINE_FULL)){
 			LF_StopFollowing();
+			Q4CLeft_SetPos(0);
+			Q4CRight_SetPos(0);
+			TURN_MoveToPos(250,250, TRUE,NULL,100);
 			TURN_Turn(TURN_LEFT180, 0);
 			LF_StartFollowing();
 			turned = TRUE;
 		}
-		if(turned && lineKind==REF_LINE_NONE){
+		else if((kurve == FALSE) &&  turned && (lineKind==REF_LINE_LEFT)){
+			Q4CLeft_SetPos(0);
+			Q4CRight_SetPos(0);
+			TURN_MoveToPos(0,350, TRUE,NULL,100);
+			kurve = TRUE;
+		}
+		else if(turned && (lineKind==REF_LINE_NONE)){
 			LF_StopFollowing();
 			BUZ_PlayTune(BUZ_TUNE_AENTLISONG);
 			state = stop;
@@ -223,7 +233,7 @@ static void SUMO_Drive(void * pvParameters){
 	(void*)pvParameters;
 	for(;;){
 		doDriving();
-		vTaskDelay(pdMS_TO_TICKS(10));
+		vTaskDelay(pdMS_TO_TICKS(4));
 	}
 }
 

@@ -142,7 +142,7 @@ static void PID_LineCfg(uint16_t currLine, uint16_t setLine, PID_Config *config)
     }
   } else if (errorPercent <= 40) {
     /* outside left/right halve position from center, slow down one motor and speed up the other */
-    speed = ((int32_t)config->maxSpeedPercent)*(0xffff/100)*8/10; /* 80% */
+    speed = ((int32_t)config->maxSpeedPercent)*(0xffff/100)*9/10; /* 80% */
     pid = Limit(pid, -speed, speed);
     if (pid<0) { /* turn right */
       speedR = speed+pid; /* decrease speed */
@@ -151,8 +151,8 @@ static void PID_LineCfg(uint16_t currLine, uint16_t setLine, PID_Config *config)
       speedR = speed+pid; /* increase speed */
       speedL = speed-pid; /* decrease speed */
     }
-  } else if (errorPercent <= 70) {
-    speed = ((int32_t)config->maxSpeedPercent)*(0xffff/100)*6/10; /* %60 */
+  } else if (errorPercent <= 90) {
+    speed = ((int32_t)config->maxSpeedPercent)*(0xffff/100)*7/10; /* %60 */
     pid = Limit(pid, -speed, speed);
     if (pid<0) { /* turn right */
       speedR = 0 /*maxSpeed+pid*/; /* decrease speed */
@@ -472,11 +472,11 @@ void PID_Init(void) {
   config.speedRightConfig.lastError = 0;
   config.speedRightConfig.integral = 0;
 
-  config.lineFwConfig.pFactor100 = 500;
+  config.lineFwConfig.pFactor100 = 570;
   config.lineFwConfig.iFactor100 = 20;
-  config.lineFwConfig.dFactor100 = 200;
+  config.lineFwConfig.dFactor100 = 220;
   config.lineFwConfig.iAntiWindup = 50;
-  config.lineFwConfig.maxSpeedPercent = 60;
+  config.lineFwConfig.maxSpeedPercent = 62;
   config.lineFwConfig.lastError = 0;
   config.lineFwConfig.integral = 0;
 
